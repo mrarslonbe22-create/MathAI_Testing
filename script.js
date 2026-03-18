@@ -143,3 +143,92 @@ function restartTest() {
   document.getElementById('result-section').style.display = 'none';
   document.getElementById('start-section').style.display = 'block';
 }
+let tavsiyaHTML = "";
+
+if (wrongTopics.includes("daraja")) {
+  tavsiyaHTML += `<button onclick="openLesson('daraja')">Daraja mavzusini o‘rganish</button><br>`;
+}
+
+if (wrongTopics.includes("ildiz")) {
+  tavsiyaHTML += `<button onclick="openLesson('ildiz')">Ildiz mavzusini o‘rganish</button><br>`;
+}
+
+if (wrongTopics.includes("trigonometriya")) {
+  tavsiyaHTML += `<button onclick="openLesson('trigonometriya')">Trigonometriya mavzusini o‘rganish</button>`;
+}
+
+document.getElementById("result").innerHTML += tavsiyaHTML;
+
+function openLesson(topic) {
+  localStorage.setItem("topic", topic);
+  window.location.href = "lesson.html";
+}
+let level = 1;
+if (score == 5) {
+  level++;
+} else if (score <= 2) {
+  level = 1;
+}
+function randomAdd() {
+  let a, b;
+
+  if (level == 1) {
+    a = Math.floor(Math.random() * 10);
+    b = Math.floor(Math.random() * 10);
+  } else if (level == 2) {
+    a = Math.floor(Math.random() * 50);
+    b = Math.floor(Math.random() * 50);
+  } else {
+    a = Math.floor(Math.random() * 100);
+    b = Math.floor(Math.random() * 100);
+  }
+
+  return {
+    question: `${a} + ${b}`,
+    answer: a + b,
+    topic: "qoshish"
+  };
+}
+function randomPower() {
+  let a = Math.floor(Math.random() * 5) + 2;
+  let n;
+
+  if (level == 1) n = 2;
+  else if (level == 2) n = 3;
+  else n = 4;
+
+  return {
+    question: `${a}^${n}`,
+    answer: Math.pow(a, n),
+    topic: "daraja"
+  };
+}
+localStorage.setItem("level", level);
+level = parseInt(localStorage.getItem("level")) || 1;
+function saveResult(name, score) {
+  let results = JSON.parse(localStorage.getItem("results")) || [];
+
+  results.push({
+    name: name,
+    score: score,
+    date: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("results", JSON.stringify(results));
+}
+saveResult(userName, score);
+let timeLeft = 60;
+
+function startTimer() {
+  const timer = setInterval(() => {
+    document.getElementById("timer").innerText = "⏱ " + timeLeft;
+
+    timeLeft--;
+
+    if (timeLeft < 0) {
+      clearInterval(timer);
+      checkAnswers(); // avtomatik tekshiradi
+    }
+  }, 1000);
+}
+startTimer();
