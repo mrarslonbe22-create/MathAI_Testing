@@ -1,7 +1,7 @@
 let questions = [];
 let answers = [];
 let userName = "";
-let timeLeft = 60;
+let timeLeft = 150;
 let timerInterval;
 
 // Random son
