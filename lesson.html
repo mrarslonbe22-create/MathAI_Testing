@@ -1,4 +1,26 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Dars sahifasi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1 id="title"></h1>
+  <div id="content"></div>
+
+  <h3>🤖 AI tushuntirish:</h3>
+  <div id="aiContent">Yuklanmoqda...</div>
+
+  <br>
+  <button onclick="goBack()">⬅️ Orqaga</button>
+</div>
+
 <script>
+const topic = localStorage.getItem("topic");
+
 // Statik darslar
 const lessons = {
   daraja: {
@@ -40,8 +62,6 @@ const lessons = {
   }
 };
 
-// Mavzuni chiqarish
-const topic = localStorage.getItem("topic");
 if (!lessons[topic]) {
   document.getElementById("title").innerText = "Mavzu topilmadi";
 } else {
@@ -49,7 +69,7 @@ if (!lessons[topic]) {
   document.getElementById("content").innerHTML = lessons[topic].content;
 }
 
-// 🔥 AI FUNKSIYA
+// AI funksiya (API key qo‘yish shart)
 async function askAI(question){
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -66,33 +86,28 @@ async function askAI(question){
         ]
       })
     });
-
     const data = await response.json();
     return data.choices[0].message.content;
-
-  } catch (err) {
-    return "AI ishlamayapti (API key qo‘yilmagan yoki xato)";
+  } catch {
+    return "AI ishlamayapti (API key xato yoki yo‘q)";
   }
 }
 
 async function loadAI(){
-  let aiDiv = document.getElementById("aiContent");
-
+  const aiDiv = document.getElementById("aiContent");
   if (!topic) {
     aiDiv.innerHTML = "Mavzu topilmadi";
     return;
   }
-
   aiDiv.innerHTML = "AI tushuntirmoqda...";
-
-  let response = await askAI(Matematika mavzusi: ${topic}. Oddiy qilib tushuntir va misol keltir.);
-  
+  const response = await askAI(Matematika mavzusi: ${topic}. Oddiy qilib tushuntir va misol keltir.);
   aiDiv.innerHTML = response;
 }
 
 loadAI();
 
-function goBack(){
-  window.location.href = "index.html";
-}
+function goBack(){ window.location.href="index.html"; }
 </script>
+
+</body>
+</html>
