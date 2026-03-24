@@ -1,3 +1,4 @@
+[24.03.2026 22:24] Maxsudali: // GLOBAL VARIABLES
 let questions = [];
 let answers = [];
 let userName = "";
@@ -5,99 +6,86 @@ let timeLeft = 160;
 let timerInterval;
 let difficulty = "easy";
 
-// Random son
+// RANDOM INT
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Random trig funksiyasi
+// RANDOM TRIG FUNCTION
 function randomTrig() {
-  const funcs = ["sin", "cos", "tan", "cot"];
+  const funcs = ["sin","cos","tan","cot"];
   return funcs[randomInt(0, funcs.length - 1)];
 }
 
-// Savollarni yaratish
-function generateQuestions() {
+// GENERATE QUESTIONS
+function generateQuestions(){
   questions = [];
   answers = [];
 
   let a, b;
 
-  // Sonlarni difficulty ga qarab tanlash
-  if (difficulty === "easy") {
-    a = randomInt(5, 20);
-    b = randomInt(5, 20);
-  } else if (difficulty === "medium") {
-    a = randomInt(20, 50);
-    b = randomInt(10, 30);
+  if(difficulty==="easy"){
+    a=randomInt(5,20);
+    b=randomInt(5,20);
+  } else if(difficulty==="medium"){
+    a=randomInt(20,50);
+    b=randomInt(10,30);
   } else {
-    a = randomInt(50, 100);
-    b = randomInt(20, 50);
+    a=randomInt(50,100);
+    b=randomInt(20,50);
   }
 
-  // Oddiy amallar
   questions.push(${a} + ${b});
-  answers.push(a + b);
+  answers.push(a+b);
 
   questions.push(${a} * ${b});
-  answers.push(a * b);
+  answers.push(a*b);
 
   questions.push(${a}^2);
-  answers.push(a * a);
+  answers.push(a*a);
 
   questions.push(√${a*b});
   answers.push(Math.round(Math.sqrt(a*b)));
 
-  // Trigonometrik savol
-  let trigFunc = randomTrig();
-  let angle = [0, 30, 45, 60][randomInt(0, 3)];
-  let rad = angle * Math.PI / 180;
-  let trigValue;
+  let angle=[0,30,45,60][randomInt(0,3)];
+  questions.push(sin(${angle}°));
+  answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
 
-  if (trigFunc === "sin") trigValue = Math.sin(rad);
-  if (trigFunc === "cos") trigValue = Math.cos(rad);
-  if (trigFunc === "tan") trigValue = Math.tan(rad);
-  if (trigFunc === "cot") trigValue = 1 / Math.tan(rad);
-
-  questions.push(${trigFunc}(${angle}°));
-  answers.push(Math.round(trigValue * 100) / 100);
-
-  // HTML ga chiqarish
-  const labels = document.querySelectorAll("#test-section label span");
-  questions.forEach((q, i) => labels[i].textContent = q);
+  // Show questions
+  for(let i=1;i<=5;i++){
+    document.querySelector(#q${i}).previousElementSibling.querySelector("span").innerText = questions[i-1];
+  }
 }
 
-// Timer
-function startTimer() {
+// TIMER
+function startTimer(){
   timeLeft = 160;
-  timerInterval = setInterval(() => {
-    document.getElementById("timer").innerText = ⏱️ ${timeLeft};
+  timerInterval = setInterval(()=>{
+    document.getElementById("timer").innerText="⏱️ "+timeLeft;
     timeLeft--;
-    if (timeLeft < 0) {
+    if(timeLeft < 0){
       clearInterval(timerInterval);
       checkTest();
     }
-  }, 1000);
+  },1000);
 }
 
-// Testni boshlash
-function startTest() {
-  const first = document.getElementById("firstName").value.trim();
-  const last = document.getElementById("lastName").value.trim();
+// START TEST
+function startTest(){
+  const first = document.getElementById("firstName").value;
+  const last = document.getElementById("lastName").value;
   const pass = document.getElementById("password").value;
 
-  if (pass !== "1234") {
+  if(pass !== "1234"){
     alert("Parol noto‘g‘ri!");
     return;
   }
-
-  if (!first || !last) {
+  if(!first || !last){
     alert("Ism va familiya kiriting!");
     return;
   }
 
   userName = first + " " + last;
-
   document.getElementById("start-section").style.display = "none";
   document.getElementById("test-section").style.display = "block";
 
@@ -105,47 +93,44 @@ function startTest() {
   startTimer();
 }
 
-// Natijalarni saqlash
-function saveResult(name, score) {
+// SAVE RESULT
+function saveResult(name,score){
   let data = JSON.parse(localStorage.getItem("results")) || [];
-  data.push({ name, score, date: new Date().toLocaleString() });
-  localStorage.setItem("results", JSON.stringify(data));
+  data.push({name,score,date:new Date().toLocaleString()});
+  localStorage.setItem("results",JSON.stringify(data));
 }
 
-// Foydalanuvchi ma’lumotlarini saqlash
-function saveUserData(topic, correct) {
+// SAVE USER DATA
+function saveUserData(topic,correct){
   let data = JSON.parse(localStorage.getItem("userData")) || {};
-
-  if (!data[topic]) data[topic] = { correct: 0, wrong: 0 };
-
-  if (correct) data[topic].correct++;
+  if(!data[topic]) data[topic] = {correct:0,wrong:0};
+  if(correct) data[topic].correct++;
   else data[topic].wrong++;
-
-  localStorage.setItem("userData", JSON.stringify(data));
+  localStorage.setItem("userData",JSON.stringify(data));
 }
 
-// Zaif mavzularni olish
-function getWeakTopics() {
+// GET WEAK TOPICS
+function getWeakTopics(){
   let data = JSON.parse(localStorage.getItem("userData")) || {};
   let weak = [];
-
-  for (let topic in data) {
-    if (data[topic].wrong > data[topic].correct) weak.push(topic);
+  for(let topic in data){
+    if(data[topic].wrong > data[topic].correct){
+      weak.push(topic);
+    }
   }
   return weak;
 }
 
-// Tavsiyalarni ko‘rsatish
-function showRecommendations() {
+// SHOW RECOMMENDATIONS
+function showRecommendations(){
   let weak = getWeakTopics();
-  const output = document.getElementById("recommendation");
-  output.innerHTML = "";
+  let output = document.getElementById("recommendation");
 
-  if (weak.length === 0) {
+  if(weak.length===0){
     output.innerHTML = "Siz yaxshi ketyapsiz 👍";
   } else {
-    output.innerHTML = "Quyidagi mavzularni o‘rganing: " + weak.join(", ") + "<br>";
-    weak.forEach(t => {
+    output.innerHTML = "Quyidagi mavzularni o‘rganing: "+weak.join(", ")+"<br>";
+    weak.forEach(t=>{
       output.innerHTML += <button onclick="openLesson('${t}')">${t} leksiyasi</button><br>;
     });
   }
@@ -153,63 +138,61 @@ function showRecommendations() {
   document.getElementById("nextTopicBtn").innerText = nextTopic();
 }
 
-// Testni tekshirish
-function checkTest() {
+// CHECK TEST
+function checkTest(){
   clearInterval(timerInterval);
 
-  let score = 0;
-  let wrongTopics = [];
-[24.03.2026 20:58] Maxsudali: for (let i = 1; i <= 5; i++) {
-    let user = parseFloat(document.getElementById("q" + i).value);
-    if (Math.abs(user - answers[i - 1]) < 0.1) {
-      score++;
-      saveUserData("umumiy", true);
-    } else {
-      if (i === 3) wrongTopics.push("daraja");
-      if (i === 4) wrongTopics.push("ildiz");
-      if (i === 5) wrongTopics.push("trigonometriya");
+  let score=0;
+  let wrongTopics=[];
 
-      saveUserData(wrongTopics[i - 1] || "umumiy", false);
+  for(let i=1;i<=5;i++){
+    let user=parseFloat(document.getElementById("q"+i).value);
+    if(Math.abs(user-answers[i-1])<0.1){
+      score++;
+      saveUserData("umumiy",true);
+    } else {
+      if(i===3) wrongTopics.push("daraja");
+      if(i===4) wrongTopics.push("ildiz");
+      if(i===5) wrongTopics.push("trigonometriya");
+
+      saveUserData(wrongTopics[i-1] || "umumiy",false);
     }
   }
-
-  saveResult(userName, score);
-
-  document.getElementById("greeting").innerText = "Salom " + userName;
-  document.getElementById("score").innerText = "Ball: " + score + "/5";
+[24.03.2026 22:24] Maxsudali: saveResult(userName,score);
+  document.getElementById("greeting").innerText = "Salom "+userName;
+  document.getElementById("score").innerText = "Ball: "+score+"/5";
+  document.getElementById("recommendation").innerHTML += "<br>"+smartRecommendation(score);
 
   showRecommendations();
 
-  document.getElementById("test-section").style.display = "none";
-  document.getElementById("result-section").style.display = "block";
+  document.getElementById("test-section").style.display="none";
+  document.getElementById("result-section").style.display="block";
 
-  // Difficulty update
-  if (score <= 2) difficulty = "easy";
-  else if (score <= 4) difficulty = "medium";
-  else difficulty = "hard";
+  // Adjust difficulty for next test
+  if(score<=2) difficulty="easy";
+  else if(score<=4) difficulty="medium";
+  else difficulty="hard";
 }
 
-// Keyingi mavzu
-function nextTopic() {
+// NEXT TOPIC
+function nextTopic(){
   let weak = getWeakTopics();
-  if (weak.length > 0) return "Keyingi o‘rganish: " + weak[0];
-  return "Murakkab masalalarga o‘ting 🔥";
+  if(weak.length>0) return "Keyingi o‘rganish: "+weak[0];
+  else return "Murakkab masalalarga o‘ting 🔥";
 }
 
-// Restart
-function restartTest() {
-  location.reload();
+// RESTART
+function restartTest(){ location.reload(); }
+
+// OPEN LESSON
+function openLesson(topic){
+  localStorage.setItem("topic",topic);
+  window.location.href="lesson.html";
 }
 
-// Lektsiya ochish
-function openLesson(topic) {
-  localStorage.setItem("topic", topic);
-  window.location.href = "lesson.html";
-}
-
-// Smart recommendation
-function smartRecommendation(score) {
-  if (score <= 2) return "Boshlang‘ich darajadan qayta o‘rganing";
-  if (score <= 4) return "Mashqlarni ko‘proq bajaring";
+// SMART RECOMMENDATION
+function smartRecommendation(score){
+  if(score<=2) return "Boshlang‘ich darajadan qayta o‘rganing";
+  if(score<=4) return "Mashqlarni ko‘proq bajaring";
   return "Murakkab masalalarga o‘ting 🔥";
 }
