@@ -67,7 +67,7 @@ function startTimer() {
   }, 1000);
 }
 
-// Test boshlash
+// Start
 function startTest() {
   const first = document.getElementById("firstName").value;
   const last = document.getElementById("lastName").value;
@@ -114,17 +114,16 @@ function checkTest() {
   saveResult(userName, score);
 
   let recommendation = wrongTopics.length
-    ? "Siz quyidagilarni o‘rganing: " + wrongTopics.join(", ")
+    ? "O‘rganing: " + wrongTopics.join(", ")
     : "A’lo!";
 
   document.getElementById("greeting").innerText = "Salom " + userName;
   document.getElementById("score").innerText = "Ball: " + score + "/5";
   document.getElementById("recommendation").innerText = recommendation;
 
-  // Tugmalar
   let html = "";
   wrongTopics.forEach(t => {
-    html += `<button onclick="openLesson('${t}')">${t} o‘rganish</button><br>`;
+    html += `<button onclick="openLesson('${t}')">${t}</button><br>`;
   });
 
   document.getElementById("recommendation").innerHTML += "<br>" + html;
@@ -133,7 +132,7 @@ function checkTest() {
   document.getElementById("result-section").style.display = "block";
 }
 
-// Lesson ochish
+// Lesson
 function openLesson(topic) {
   localStorage.setItem("topic", topic);
   window.location.href = "lesson.html";
@@ -146,7 +145,7 @@ function saveResult(name, score) {
   localStorage.setItem("results", JSON.stringify(data));
 }
 
-// Qayta boshlash
+// Restart
 function restartTest() {
   location.reload();
 }
