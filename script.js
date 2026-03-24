@@ -35,24 +35,25 @@ function generateQuestions(){
     b=randomInt(20,50);
   }
 
-  questions.push('${a} + ${b}');
+  // Template literal bilan savollar
+  questions.push(${a} + ${b});
   answers.push(a+b);
 
-  questions.push('${a} * ${b}');
+  questions.push(${a} * ${b});
   answers.push(a*b);
 
-  questions.push('${a}^2');
+  questions.push(${a}^2);
   answers.push(a*a);
 
-  questions.push('√${a*b}');
+  questions.push(√${a*b});
   answers.push(Math.round(Math.sqrt(a*b)));
 
-  let angle=[0,30,45,60][randomInt(0,3)];
-  questions.push('sin(${angle}°)');
+  let angle = [0,30,45,60][randomInt(0,3)];
+  questions.push(sin(${angle}°));
   answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
 
-  // Show questions
-  for(let i=1;i<=5;i++){
+  // DOM ga savollarni chiqarish
+  for(let i=1; i<=5; i++){
     document.querySelector(#q${i}).previousElementSibling.querySelector("span").innerText = questions[i-1];
   }
 }
@@ -72,9 +73,9 @@ function startTimer(){
 
 // START TEST
 function startTest(){
-  const first = document.getElementById("firstName").value;
-  const last = document.getElementById("lastName").value;
-  const pass = document.getElementById("password").value;
+  const first = document.getElementById("firstName").value.trim();
+  const last = document.getElementById("lastName").value.trim();
+  const pass = document.getElementById("password").value.trim();
 
   if(pass !== "1234"){
     alert("Parol noto‘g‘ri!");
@@ -154,11 +155,10 @@ function checkTest(){
       if(i===3) wrongTopics.push("daraja");
       if(i===4) wrongTopics.push("ildiz");
       if(i===5) wrongTopics.push("trigonometriya");
-
       saveUserData(wrongTopics[i-1] || "umumiy",false);
     }
   }
-  saveResult(userName,score);
+   saveResult(userName,score);
   document.getElementById("greeting").innerText = "Salom "+userName;
   document.getElementById("score").innerText = "Ball: "+score+"/5";
   document.getElementById("recommendation").innerHTML += "<br>"+smartRecommendation(score);
