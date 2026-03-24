@@ -137,7 +137,7 @@ function openLesson(topic) {
   localStorage.setItem("topic", topic);
   window.location.href = "lesson.html";
 }
-
+saveResults(userId, resultData);
 // Saqlash
 function saveResult(name, score) {
   let data = JSON.parse(localStorage.getItem("results")) || [];
