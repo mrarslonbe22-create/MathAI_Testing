@@ -9,7 +9,8 @@
 
 <div class="container">
   <h1>📊 Natijalar</h1>
-  <table border="1" width="100%">
+
+  <table>
     <thead>
       <tr>
         <th>Ism</th>
@@ -19,22 +20,32 @@
     </thead>
     <tbody id="tableBody"></tbody>
   </table>
+
+  <br>
+  <button onclick="clearData()">🗑 Tozalash</button>
 </div>
 
 <script>
-let results = JSON.parse(localStorage.getItem("results")) || [];
+let data = JSON.parse(localStorage.getItem("results")) || "";
 
 let html = "";
 
-results.forEach(r => {
-  html += `<tr>
-    <td>${r.name}</td>
-    <td>${r.score}/5</td>
-    <td>${r.date}</td>
-  </tr>`;
+data.forEach(d => {
+  html += `
+    <tr>
+      <td>${d.name}</td>
+      <td>${d.score}/5</td>
+      <td>${d.date}</td>
+    </tr>
+  `;
 });
 
 document.getElementById("tableBody").innerHTML = html;
+
+function clearData(){
+  localStorage.removeItem("results");
+  location.reload();
+}
 </script>
 
 </body>

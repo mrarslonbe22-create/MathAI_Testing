@@ -10,6 +10,8 @@
 <div class="container">
   <h1 id="title"></h1>
   <div id="content"></div>
+  <br>
+  <button onclick="goBack()">⬅ Orqaga</button>
 </div>
 
 <script>
@@ -17,37 +19,35 @@ const topic = localStorage.getItem("topic");
 
 const lessons = {
   daraja: {
-    title: "Daraja ko‘tarish",
+    title: "Daraja",
     content: `
-    <h3>Asosiy formulalar:</h3>
+    <h3>Formulalar:</h3>
     <p>aⁿ × aᵐ = aⁿ⁺ᵐ</p>
     <p>(aⁿ)ᵐ = aⁿᵐ</p>
     <p>a⁰ = 1</p>
     <p>a⁻ⁿ = 1/aⁿ</p>
     <p>(ab)ⁿ = aⁿbⁿ</p>
-    <p>a¹ = a</p>
-    <p>1ⁿ = 1</p>
-    <p>0ⁿ = 0</p>
     <p>a² = a × a</p>
     <p>a³ = a × a × a</p>
 
     <h3>Nazariya:</h3>
-    <p>Daraja sonni o‘ziga ko‘paytirishni bildiradi. Masalan: 2³ = 2×2×2 = 8</p>
+    <p>Daraja — sonni o‘ziga ko‘paytirishdir.</p>
+
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Parabola.svg" width="250">
     `
   },
 
   ildiz: {
-    title: "Ildiz olish",
+    title: "Ildiz",
     content: `
     <h3>Formulalar:</h3>
     <p>√a × √b = √ab</p>
     <p>√(a²) = a</p>
     <p>√(a/b) = √a / √b</p>
     <p>(√a)² = a</p>
-    <p>³√a = kub ildiz</p>
 
     <h3>Nazariya:</h3>
-    <p>Ildiz — darajaning teskari amali. Masalan: √9 = 3</p>
+    <p>Ildiz — darajaning teskari amali.</p>
     `
   },
 
@@ -58,22 +58,22 @@ const lessons = {
     <p>sin²x + cos²x = 1</p>
     <p>tan x = sin x / cos x</p>
     <p>ctg x = cos x / sin x</p>
-    <p>sin(0°) = 0</p>
-    <p>cos(0°) = 1</p>
 
     <h3>Nazariya:</h3>
     <p>Trigonometrik funksiyalar burchaklar bilan ishlaydi.</p>
+
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/Sine_cosine_one_period.svg" width="300">
     `
   }
 };
 
 document.getElementById("title").innerText = lessons[topic].title;
 document.getElementById("content").innerHTML = lessons[topic].content;
+
+function goBack(){
+  window.location.href = "index.html";
+}
 </script>
 
 </body>
 </html>
-<h3>Grafik tushuncha:</h3>
-<p>a² grafikda parabola hosil qiladi</p>
-<img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Parabola.svg" width="200">
-<img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/Sine_cosine_one_period.svg" width="300">
