@@ -26,21 +26,15 @@
   <button onclick="clearData()">🗑 Tozalash</button>
 </div>
 
-<!-- Chart -->
-<canvas id="chart"></canvas>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-// Natijalarni olish
 let data = JSON.parse(localStorage.getItem("results")) || [];
 let userData = JSON.parse(localStorage.getItem("userData")) || {};
 
 let html = "";
 
 data.forEach(d => {
-  let wrongTopics = userData[d.name] 
-    ? Object.keys(userData[d.name]).filter(t => userData[d.name][t].wrong > 0).join(", ")
-    : "-";
+  // Foydalanuvchining noto‘g‘ri mavzularini olish
+  let wrongTopics = userData[d.name] ? Object.keys(userData[d.name]).filter(t=>userData[d.name][t].wrong > 0).join(", ") : "-";
 
   html += 
     <tr>
