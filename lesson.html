@@ -1,69 +1,47 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-  <meta charset="UTF-8">
-  <title>Dars sahifasi</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="container">
-  <h1 id="title"></h1>
-
-  <div id="content"></div>
-
-  <h3>🤖 AI tushuntirish:</h3>
-  <div id="aiContent">Yuklanmoqda...</div>
-
-  <br>
-  <button onclick="goBack()">⬅️ Orqaga</button>
-</div>
-
 <script>
-const topic = localStorage.getItem("topic");
-
 // Statik darslar
 const lessons = {
   daraja: {
     title: "Daraja",
     content: 
-    <h3>Formulalar:</h3>
-    <p>aⁿ × aᵐ = aⁿ⁺ᵐ</p>
-    <p>(aⁿ)ᵐ = aⁿᵐ</p>
-    <p>a⁰ = 1</p>
-    <p>a⁻ⁿ = 1/aⁿ</p>
+      <h3>Formulalar:</h3>
+      <p>aⁿ × aᵐ = aⁿ⁺ᵐ</p>
+      <p>(aⁿ)ᵐ = aⁿᵐ</p>
+      <p>a⁰ = 1</p>
+      <p>a⁻ⁿ = 1/aⁿ</p>
 
-    <h3>Nazariya:</h3>
-    <p>Daraja — sonni o‘ziga ko‘paytirishdir.</p>
+      <h3>Nazariya:</h3>
+      <p>Daraja — sonni o‘ziga ko‘paytirishdir.</p>
     
   },
 
   ildiz: {
     title: "Ildiz",
     content: 
-    <h3>Formulalar:</h3>
-    <p>√a × √b = √ab</p>
-    <p>√(a²) = a</p>
+      <h3>Formulalar:</h3>
+      <p>√a × √b = √ab</p>
+      <p>√(a²) = a</p>
 
-    <h3>Nazariya:</h3>
-    <p>Ildiz — darajaning teskari amali.</p>
+      <h3>Nazariya:</h3>
+      <p>Ildiz — darajaning teskari amali.</p>
     
   },
 
   trigonometriya: {
     title: "Trigonometriya",
     content: 
-    <h3>Formulalar:</h3>
-    <p>sin²x + cos²x = 1</p>
-    <p>tan x = sin x / cos x</p>
+      <h3>Formulalar:</h3>
+      <p>sin²x + cos²x = 1</p>
+      <p>tan x = sin x / cos x</p>
 
-    <h3>Nazariya:</h3>
-    <p>Trigonometrik funksiyalar burchaklar bilan ishlaydi.</p>
+      <h3>Nazariya:</h3>
+      <p>Trigonometrik funksiyalar burchaklar bilan ishlaydi.</p>
     
   }
 };
 
-// Agar topic topilmasa crash bo‘lmasin
+// Mavzuni chiqarish
+const topic = localStorage.getItem("topic");
 if (!lessons[topic]) {
   document.getElementById("title").innerText = "Mavzu topilmadi";
 } else {
@@ -83,8 +61,8 @@ async function askAI(question){
       body:JSON.stringify({
         model:"gpt-4o-mini",
         messages:[
-          {role:"system",content:"Sen matematika o‘qituvchisisan. Oddiy va sodda tushuntir."},
-          {role:"user",content:question}
+          {role:"system", content:"Sen matematika o‘qituvchisisan. Oddiy va sodda tushuntir."},
+          {role:"user", content: question}
         ]
       })
     });
@@ -97,7 +75,6 @@ async function askAI(question){
   }
 }
 
-// AI ni chaqirish
 async function loadAI(){
   let aiDiv = document.getElementById("aiContent");
 
@@ -119,6 +96,3 @@ function goBack(){
   window.location.href = "index.html";
 }
 </script>
-
-</body>
-</html>
