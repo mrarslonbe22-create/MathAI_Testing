@@ -55,7 +55,7 @@ function generateQuestions() {
 
 // Timer
 function startTimer() {
-  timeLeft = 60;
+  timeLeft = 160;
   timerInterval = setInterval(() => {
     document.getElementById("timer").innerText = "⏱ " + timeLeft;
     timeLeft--;
