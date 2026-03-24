@@ -16,6 +16,7 @@
         <th>Ism</th>
         <th>Ball</th>
         <th>Vaqt</th>
+        <th>Noto‘g‘ri mavzular</th>
       </tr>
     </thead>
     <tbody id="tableBody"></tbody>
@@ -26,24 +27,32 @@
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("results")) || "";
+// Natijalarni olish
+let data = JSON.parse(localStorage.getItem("results")) || [];
+let userData = JSON.parse(localStorage.getItem("userData")) || {};
 
 let html = "";
 
 data.forEach(d => {
-  html += `
+  // Foydalanuvchining noto‘g‘ri mavzularini olish
+  let wrongTopics = userData[d.name] ? Object.keys(userData[d.name]).filter(t=>userData[d.name][t].wrong > 0).join(", ") : "-";
+
+  html += 
     <tr>
       <td>${d.name}</td>
       <td>${d.score}/5</td>
       <td>${d.date}</td>
+      <td>${wrongTopics}</td>
     </tr>
-  `;
+  ;
 });
 
 document.getElementById("tableBody").innerHTML = html;
 
+// Tozalash
 function clearData(){
   localStorage.removeItem("results");
+  localStorage.removeItem("userData");
   location.reload();
 }
 </script>
