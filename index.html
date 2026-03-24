@@ -1,66 +1,51 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <title>MathAI Test</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathAI – Mustaqil Ta'lim</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>MathAI Test</h1>
 
-  <!-- Bosh sahifa -->
-  <div id="start-section">
-    <p>Ismingizni kiriting:</p>
-    <input type="text" id="firstName" placeholder="Ism">
-    <p>Familiyangizni kiriting:</p>
-    <input type="text" id="lastName" placeholder="Familiya">
-    <br>
-    <button onclick="startTest()">Boshlash</button>
+<div class="container" id="start-section">
+  <h1>MathAI – Mustaqil Ta'lim</h1>
+  <input type="text" id="firstName" placeholder="Ismingiz"><br>
+  <input type="text" id="lastName" placeholder="Familiyangiz"><br>
+  <button onclick="startTest()">Testni boshlash</button>
+</div>
+
+<div class="container" id="test-section" style="display:none;">
+  <h2 id="timer">⏱️ 160</h2>
+  <div>
+    <label>1. <span></span></label>
+    <input type="number" id="q1"><br>
+    <label>2. <span></span></label>
+    <input type="number" id="q2"><br>
+    <label>3. <span></span></label>
+    <input type="number" id="q3"><br>
+    <label>4. <span></span></label>
+    <input type="number" id="q4"><br>
+    <label>5. <span></span></label>
+    <input type="number" id="q5"><br>
   </div>
+  <button onclick="checkTest()">Tugallash</button>
+</div>
 
-  <!-- Test sahifasi -->
-  <div id="test-section" style="display:none;">
-    
-    <!-- TIMER -->
-    <h3 id="timer">Vaqt: 160</h3>
+<div class="container result-card" id="result-section" style="display:none;">
+  <h2 id="greeting"></h2>
+  <p id="score"></p>
+  <div id="recommendation"></div>
+  <p id="nextTopicBtn"></p>
+  <button onclick="restartTest()">Qayta boshlash</button>
+</div>
 
-    <div class="question">
-      <p>1) 5 + 7 = ?</p>
-      <input type="number" id="q1" placeholder="Javob">
-    </div>
-    <div class="question">
-      <p>2) 12 * 3 = ?</p>
-      <input type="number" id="q2" placeholder="Javob">
-    </div>
-    <div class="question">
-      <p>3) 15 ÷ 3 = ?</p>
-      <input type="number" id="q3" placeholder="Javob">
-    </div>
-    <div class="question">
-      <p>4) 9 - 4 = ?</p>
-      <input type="number" id="q4" placeholder="Javob">
-    </div>
-    <div class="question">
-      <p>5) 7² = ?</p>
-      <input type="number" id="q5" placeholder="Javob">
-    </div>
+<div class="container lesson-card" id="lesson-section" style="display:none;">
+  <h2>Leksiyani ko‘rish</h2>
+  <div id="lessonContent">...</div>
+  <button onclick="document.getElementById('lesson-section').style.display='none'; document.getElementById('result-section').style.display='block';">Ortga</button>
+</div>
 
-    <button onclick="checkTest()">Natijani Tekshirish</button>
-
-    <div id="progress">
-      <div id="progress-bar">0%</div>
-    </div>
-  </div>
-
-  <!-- Natija sahifasi -->
-  <div id="result-section" style="display:none;">
-    <h2 id="greeting"></h2>
-    <p id="score"></p>
-    <p id="level"></p>
-    <p class="recommendation" id="recommendation"></p>
-    <button onclick="restartTest()">Qaytadan Boshlash</button>
-  </div>
-<button onclick="goAdmin()">Admin panel</button>
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
