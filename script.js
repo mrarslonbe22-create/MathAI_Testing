@@ -5,225 +5,153 @@ let timeLeft = 160;
 let timerInterval;
 
 // Random son
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Trigonometriya
-function randomTrig() {
-  const funcs = ["sin", "cos", "tan", "cot"];
-  return funcs[randomInt(0, funcs.length - 1)];
-}
+function randomInt(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
+function randomTrig(){ const funcs=["sin","cos","tan","cot"]; return funcs[randomInt(0,funcs.length-1)]; }
 
 // Savollar
-function generateQuestions() {
-  questions = [];
-  answers = [];
-
-  let a = randomInt(10, 100);
-  let b = randomInt(10, 100);
-  questions.push(`${a} + ${b}`);
-  answers.push(a + b);
-
-  a = randomInt(5, 20);
-  b = randomInt(2, 10);
-  questions.push(`${a} * ${b}`);
-  answers.push(a * b);
-
-  a = randomInt(2, 10);
-  let power = randomInt(2, 3);
-  questions.push(`${a}^${power}`);
-  answers.push(a ** power);
-
-  a = randomInt(4, 400);
-  questions.push(`√${a}`);
-  answers.push(Math.round(Math.sqrt(a)));
-
-  let trigFunc = randomTrig();
-  let angle = [0, 30, 45, 60][randomInt(0, 3)];
-  let rad = angle * Math.PI / 180;
-
+function generateQuestions(){
+  questions=[]; answers=[];
+  let a=randomInt(10,100), b=randomInt(10,100);
+  questions.push(${a} + ${b}); answers.push(a+b);
+  a=randomInt(5,20); b=randomInt(2,10);
+  questions.push(${a} * ${b}); answers.push(a*b);
+  a=randomInt(2,10); let power=randomInt(2,3);
+  questions.push(${a}^${power}); answers.push(a**power);
+  a=randomInt(4,400);
+  questions.push(√${a}); answers.push(Math.round(Math.sqrt(a)));
+  let trigFunc=randomTrig(), angle=[0,30,45,60][randomInt(0,3)], rad=angle*Math.PI/180;
   let trig;
-  if (trigFunc === "sin") trig = Math.sin(rad);
-  if (trigFunc === "cos") trig = Math.cos(rad);
-  if (trigFunc === "tan") trig = Math.tan(rad);
-  if (trigFunc === "cot") trig = 1 / Math.tan(rad);
-
-  questions.push(`${trigFunc}(${angle}°)`);
-  answers.push(Math.round(trig * 100) / 100);
+  if(trigFunc=="sin") trig=Math.sin(rad);
+  if(trigFunc=="cos") trig=Math.cos(rad);
+  if(trigFunc=="tan") trig=Math.tan(rad);
+  if(trigFunc=="cot") trig=1/Math.tan(rad);
+  questions.push(${trigFunc}(${angle}°)); answers.push(Math.round(trig*100)/100);
 }
 
 // Timer
-function startTimer() {
-  timeLeft = 160;
-  timerInterval = setInterval(() => {
-    document.getElementById("timer").innerText = "⏱ " + timeLeft;
+function startTimer(){
+  timeLeft=160;
+  timerInterval=setInterval(()=>{
+    document.getElementById("timer").innerText="⏱️ "+timeLeft;
     timeLeft--;
-
-    if (timeLeft < 0) {
-      clearInterval(timerInterval);
-      checkTest();
-    }
-  }, 1000);
+    if(timeLeft<0){ clearInterval(timerInterval); checkTest(); }
+  },1000);
 }
 
-// Start
-function startTest() {
-  const first = document.getElementById("firstName").value;
-  const last = document.getElementById("lastName").value;
-
-  if (!first || !last) {
-    alert("Ism va familiya kiriting!");
-    return;
-  }
-
-  userName = first + " " + last;
-
-  document.getElementById("start-section").style.display = "none";
-  document.getElementById("test-section").style.display = "block";
+// Start test
+function startTest(){
+  const first=document.getElementById("firstName").value;
+  const last=document.getElementById("lastName").value;
+  if(!first || !last){ alert("Ism va familiya kiriting!"); return; }
+  userName=first+" "+last;
+  document.getElementById("start-section").style.display="none";
+  document.getElementById("test-section").style.display="block";
 
   generateQuestions();
-
-  for (let i = 1; i <= 5; i++) {
-    document.getElementById("q" + i).previousElementSibling.innerText = questions[i - 1];
-    document.getElementById("q" + i).value = "";
+  for(let i=1;i<=5;i++){
+    document.getElementById("q"+i).previousElementSibling.innerText=questions[i-1];
+    document.getElementById("q"+i).value="";
   }
-
   startTimer();
 }
 
-// Tekshirish
-function checkTest() {
+// Save results
+function saveResult(name,score){
+  let data=JSON.parse(localStorage.getItem("results"))||[];
+  data.push({name,score,date:new Date().toLocaleString()});
+  localStorage.setItem("results",JSON.stringify(data));
+}
+
+// User data for weak topics
+function saveUserData(topic,correct){
+  let data=JSON.parse(localStorage.getItem("userData"))||{};
+  if(!data[topic]) data[topic]={correct:0,wrong:0};
+  if(correct) data[topic].correct++; else data[topic].wrong++;
+  localStorage.setItem("userData",JSON.stringify(data));
+}
+
+function getWeakTopics(){
+  let data=JSON.parse(localStorage.getItem("userData"))||{};
+  let weak=[];
+  for(let topic in data){ if(data[topic].wrong>data[topic].correct) weak.push(topic); }
+  return weak;
+}
+
+// Show recommendations
+function showRecommendations(){
+  let weak=getWeakTopics();
+  let output=document.getElementById("recommendation");
+  if(weak.length===0) output.innerHTML="Siz yaxshi ketyapsiz 👍";
+  else{
+    output.innerHTML="Quyidagi mavzularni o‘rganing: "+weak.join(",")+"<br>";
+    weak.forEach(t=>{
+      output.innerHTML+=<button onclick="openLesson('${t}')">${t} leksiyasi</button><br>;
+    });
+  }
+  document.getElementById("nextTopicBtn").innerText=nextTopic();
+}
+
+// Check test
+function checkTest(){
   clearInterval(timerInterval);
-
-  let score = 0;
-  let wrongTopics = [];
-
-  for (let i = 1; i <= 5; i++) {
-    let user = parseFloat(document.getElementById("q" + i).value);
-
-    if (Math.abs(user - answers[i - 1]) < 0.1) {
-      score++;
-    } else {
-      if (i === 3) wrongTopics.push("daraja");
-      if (i === 4) wrongTopics.push("ildiz");
-      if (i === 5) wrongTopics.push("trigonometriya");
+  let score=0;
+  let wrongTopics=[];
+  for(let i=1;i<=5;i++){
+    let user=parseFloat(document.getElementById("q"+i).value);
+    if(Math.abs(user-answers[i-1])<0.1){ score++; saveUserData("umumiy",true); }
+    else{
+      if(i===3) wrongTopics.push("daraja");
+      if(i===4) wrongTopics.push("ildiz");
+      if(i===5) wrongTopics.push("trigonometriya");
+      saveUserData(wrongTopics[i-1]||"umumiy",false);
     }
   }
-
-  saveResult(userName, score);
-
-  let recommendation = wrongTopics.length
-    ? "O‘rganing: " + wrongTopics.join(", ")
-    : "A’lo!";
-
-  document.getElementById("greeting").innerText = "Salom " + userName;
-  document.getElementById("score").innerText = "Ball: " + score + "/5";
-  document.getElementById("recommendation").innerText = recommendation;
-
-  let html = "";
-  wrongTopics.forEach(t => {
-    html += `<button onclick="openLesson('${t}')">${t}</button><br>`;
-  });
-
-  document.getElementById("recommendation").innerHTML += "<br>" + html;
-
-  document.getElementById("test-section").style.display = "none";
-  document.getElementById("result-section").style.display = "block";
+  saveResult(userName,score);
+  document.getElementById("greeting").innerText="Salom "+userName;
+  document.getElementById("score").innerText="Ball: "+score+"/5";
+  showRecommendations();
+  document.getElementById("test-section").style.display="none";
+  document.getElementById("result-section").style.display="block";
 }
-
-// Lesson
-function openLesson(topic) {
-  localStorage.setItem("topic", topic);
-  window.location.href = "lesson.html";
-}
-saveResults(userId, resultData);
-// Saqlash
-function saveResult(name, score) {
-  let data = JSON.parse(localStorage.getItem("results")) || [];
-  data.push({ name, score, date: new Date().toLocaleString() });
-  localStorage.setItem("results", JSON.stringify(data));
-}
-function goAdmin() {
-  window.location.href = "admin.html";
+// Next topic
+function nextTopic(){
+  let weak=getWeakTopics();
+  if(weak.length>0) return "Keyingi o‘rganish: "+weak[0];
+  else return "Murakkab masalalarga o‘ting 🔥";
 }
 
 // Restart
-function restartTest() {
-  location.reload();
+function restartTest(){ location.reload(); }
+
+// Lesson page
+function openLesson(topic){
+  localStorage.setItem("topic",topic);
+  document.getElementById("result-section").style.display="none";
+  document.getElementById("lesson-section").style.display="block";
+  showLesson();
 }
-function goAdmin() {
-  let password = prompt("Parol kiriting:");
 
-  if (password === "1234") {
-    window.location.href = "admin.html";
-  } else {
-    alert("Noto‘g‘ri parol!");
-  }
-}
-function saveUserData(topic, correct) {
-  let data = JSON.parse(localStorage.getItem("userData")) || {};
-
-  if (!data[topic]) {
-    data[topic] = { correct: 0, wrong: 0 };
-  }
-
-  if (correct) {
-    data[topic].correct++;
-  } else {
-    data[topic].wrong++;
-  }
-
-  localStorage.setItem("userData", JSON.stringify(data));
-}
-function getWeakTopics() {
-  let data = JSON.parse(localStorage.getItem("userData")) || {};
-  let weak = [];
-
-  for (let topic in data) {
-    if (data[topic].wrong > data[topic].correct) {
-      weak.push(topic);
-    }
-  }
-
-  return weak;
-}
-function showRecommendations() {
-  let weak = getWeakTopics();
-
-  let output = document.getElementById("recommendation");
-
-  if (weak.length === 0) {
-    output.innerHTML = "Siz yaxshi ketyapsiz 👍";
-  } else {
-    output.innerHTML = "Quyidagi mavzularni o‘rganing: " + weak.join(", ");
-  }
-}
-async function askAI(question) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "Sen matematika o‘qituvchisisan. Oddiy va tushunarli tushuntir." },
-        { role: "user", content: question }
+// AI Lesson content
+async function askAI(question){
+  const response=await fetch("https://api.openai.com/v1/chat/completions",{
+    method:"POST",
+    headers:{"Authorization":"Bearer YOUR_API_KEY","Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"gpt-4o-mini",
+      messages:[
+        {role:"system",content:"Sen matematika o‘qituvchisisan. Oddiy va tushunarli tushuntir."},
+        {role:"user",content:question}
       ]
     })
   });
-
-  const data = await response.json();
+  const data=await response.json();
   return data.choices[0].message.content;
 }
-function nextTopic() {
-  let weak = getWeakTopics();
 
-  if (weak.length > 0) {
-    return "Keyingi o‘rganish: " + weak[0];
-  } else {
-    return "Murakkab masalalarga o‘ting 🔥";
-  }
+async function showLesson(){
+  let topic=localStorage.getItem("topic");
+  let lessonDiv=document.getElementById("lessonContent");
+  lessonDiv.innerHTML="AI javobi kelyapti…";
+  let aiResponse=await askAI(Matematika mavzusi: ${topic}. Oddiy tushunarli tarzda o‘rgating.);
+  lessonDiv.innerHTML=aiResponse;
 }
