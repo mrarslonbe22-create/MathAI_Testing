@@ -1,4 +1,4 @@
-[24.03.2026 22:24] Maxsudali: // GLOBAL VARIABLES
+// GLOBAL VARIABLES
 let questions = [];
 let answers = [];
 let userName = "";
@@ -35,20 +35,20 @@ function generateQuestions(){
     b=randomInt(20,50);
   }
 
-  questions.push(${a} + ${b});
+  questions.push('${a} + ${b}');
   answers.push(a+b);
 
-  questions.push(${a} * ${b});
+  questions.push('${a} * ${b}');
   answers.push(a*b);
 
-  questions.push(${a}^2);
+  questions.push('${a}^2');
   answers.push(a*a);
 
-  questions.push(√${a*b});
+  questions.push('√${a*b}');
   answers.push(Math.round(Math.sqrt(a*b)));
 
   let angle=[0,30,45,60][randomInt(0,3)];
-  questions.push(sin(${angle}°));
+  questions.push('sin(${angle}°)');
   answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
 
   // Show questions
@@ -158,7 +158,7 @@ function checkTest(){
       saveUserData(wrongTopics[i-1] || "umumiy",false);
     }
   }
-[24.03.2026 22:24] Maxsudali: saveResult(userName,score);
+  saveResult(userName,score);
   document.getElementById("greeting").innerText = "Salom "+userName;
   document.getElementById("score").innerText = "Ball: "+score+"/5";
   document.getElementById("recommendation").innerHTML += "<br>"+smartRecommendation(score);
