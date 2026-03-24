@@ -218,3 +218,12 @@ async function askAI(question) {
   const data = await response.json();
   return data.choices[0].message.content;
 }
+function nextTopic() {
+  let weak = getWeakTopics();
+
+  if (weak.length > 0) {
+    return "Keyingi o‘rganish: " + weak[0];
+  } else {
+    return "Murakkab masalalarga o‘ting 🔥";
+  }
+}
