@@ -36,25 +36,25 @@ function generateQuestions(){
   }
 
   // Template literal bilan savollar
-  questions.push(${a} + ${b});
+  questions.push('${a} + ${b}');
   answers.push(a+b);
 
-  questions.push(${a} * ${b});
+  questions.push('${a} * ${b}');
   answers.push(a*b);
 
-  questions.push(${a}^2);
+  questions.push('${a}^2');
   answers.push(a*a);
 
-  questions.push(√${a*b});
+  questions.push('√${a*b}');
   answers.push(Math.round(Math.sqrt(a*b)));
 
   let angle = [0,30,45,60][randomInt(0,3)];
-  questions.push(sin(${angle}°));
+  questions.push('sin(${angle}°)');
   answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
 
   // DOM ga savollarni chiqarish
   for(let i=1; i<=5; i++){
-    document.querySelector(#q${i}).previousElementSibling.querySelector("span").innerText = questions[i-1];
+    document.querySelector('#q${i}').previousElementSibling.querySelector("span").innerText = questions[i-1];
   }
 }
 
@@ -77,7 +77,7 @@ function startTest(){
   const last = document.getElementById("lastName").value.trim();
   const pass = document.getElementById("password").value.trim();
 
-  if(pass !== "1234"){
+  if(pass !== "7579"){
     alert("Parol noto‘g‘ri!");
     return;
   }
