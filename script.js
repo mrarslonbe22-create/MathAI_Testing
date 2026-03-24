@@ -144,8 +144,20 @@ function saveResult(name, score) {
   data.push({ name, score, date: new Date().toLocaleString() });
   localStorage.setItem("results", JSON.stringify(data));
 }
+function goAdmin() {
+  window.location.href = "admin.html";
+}
 
 // Restart
 function restartTest() {
   location.reload();
+}
+function goAdmin() {
+  let password = prompt("Parol kiriting:");
+
+  if (password === "1234") {
+    window.location.href = "admin.html";
+  } else {
+    alert("Noto‘g‘ri parol!");
+  }
 }
