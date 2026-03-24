@@ -161,3 +161,60 @@ function goAdmin() {
     alert("Noto‘g‘ri parol!");
   }
 }
+function saveUserData(topic, correct) {
+  let data = JSON.parse(localStorage.getItem("userData")) || {};
+
+  if (!data[topic]) {
+    data[topic] = { correct: 0, wrong: 0 };
+  }
+
+  if (correct) {
+    data[topic].correct++;
+  } else {
+    data[topic].wrong++;
+  }
+
+  localStorage.setItem("userData", JSON.stringify(data));
+}
+function getWeakTopics() {
+  let data = JSON.parse(localStorage.getItem("userData")) || {};
+  let weak = [];
+
+  for (let topic in data) {
+    if (data[topic].wrong > data[topic].correct) {
+      weak.push(topic);
+    }
+  }
+
+  return weak;
+}
+function showRecommendations() {
+  let weak = getWeakTopics();
+
+  let output = document.getElementById("recommendation");
+
+  if (weak.length === 0) {
+    output.innerHTML = "Siz yaxshi ketyapsiz 👍";
+  } else {
+    output.innerHTML = "Quyidagi mavzularni o‘rganing: " + weak.join(", ");
+  }
+}
+async function askAI(question) {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Sen matematika o‘qituvchisisan. Oddiy va tushunarli tushuntir." },
+        { role: "user", content: question }
+      ]
+    })
+  });
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
