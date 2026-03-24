@@ -64,9 +64,16 @@ function startTimer(){
 }
 
 // Start
-function startTest(){
+function startTest()
+{
   const first=document.getElementById("firstName").value;
   const last=document.getElementById("lastName").value;
+  const pass=document.getElementById("password").value;
+
+  if(pass !== "1234"){
+    alert("Parol noto‘g‘ri!");
+    return;
+  }
 
   if(!first || !last){
     alert("Ism va familiya kiriting!");
@@ -79,11 +86,50 @@ function startTest(){
   document.getElementById("test-section").style.display="block";
 
   generateQuestions();
+  startTimer();
+}
 
-  for(let i=1;i<=5;i++){
-    document.getElementById("q"+i).previousElementSibling.innerText=questions[i-1];
-    document.getElementById("q"+i).value="";
+  userName=first+" "+last;
+
+  document.getElementById("start-section").style.display="none";
+  document.getElementById("test-section").style.display="block";
+
+ let difficulty = "easy";
+
+function generateQuestions(){
+  questions=[]; answers=[];
+
+  let a,b;
+
+  if(difficulty==="easy"){
+    a=randomInt(5,20);
+    b=randomInt(5,20);
   }
+  else if(difficulty==="medium"){
+    a=randomInt(20,50);
+    b=randomInt(10,30);
+  }
+  else{
+    a=randomInt(50,100);
+    b=randomInt(20,50);
+  }
+
+  questions.push(${a} + ${b});
+  answers.push(a+b);
+
+  questions.push(${a} * ${b});
+  answers.push(a*b);
+
+  questions.push(${a}^2);
+  answers.push(a*a);
+
+  questions.push(√${a*b});
+  answers.push(Math.round(Math.sqrt(a*b)));
+
+  let angle=[0,30,45,60][randomInt(0,3)];
+  questions.push(sin(${angle}°));
+  answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
+}
 
   startTimer();
 }
@@ -159,7 +205,7 @@ function checkTest(){
       saveUserData(wrongTopics[i-1] || "umumiy",false);
     }
   }
-
+document.getElementById("recommendation").innerHTML += "<br>"+smartRecommendation(score);
   saveResult(userName,score);
 
   document.getElementById("greeting").innerText="Salom "+userName;
@@ -190,4 +236,12 @@ function restartTest(){
 function openLesson(topic){
   localStorage.setItem("topic",topic);
   window.location.href="lesson.html";
+}
+if(score<=2) difficulty="easy";
+else if(score<=4) difficulty="medium";
+else difficulty="hard";
+function smartRecommendation(score){
+  if(score<=2) return "Boshlang‘ich darajadan qayta o‘rganing";
+  if(score<=4) return "Mashqlarni ko‘proq bajaring";
+  return "Murakkab masalalarga o‘ting 🔥";
 }
