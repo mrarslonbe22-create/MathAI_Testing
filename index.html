@@ -7,28 +7,39 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<input type="password" id="password" placeholder="Parol">
+
 <div class="container" id="start-section">
   <h1>MathAI – Mustaqil Ta'lim</h1>
+
   <input type="text" id="firstName" placeholder="Ismingiz"><br>
   <input type="text" id="lastName" placeholder="Familiyangiz"><br>
-  <button onclick="startTest()">Testni boshlash</button>
+
+  <button onclick="startTest()">Testni boshlash</button><br><br>
+
+  <!-- ADMIN KNOPKA -->
+  <button onclick="openAdmin()">Admin</button>
 </div>
 
 <div class="container" id="test-section" style="display:none;">
   <h2 id="timer">⏱️ 160</h2>
+
   <div>
     <label>1. <span></span></label>
     <input type="number" id="q1"><br>
+
     <label>2. <span></span></label>
     <input type="number" id="q2"><br>
+
     <label>3. <span></span></label>
     <input type="number" id="q3"><br>
+
     <label>4. <span></span></label>
     <input type="number" id="q4"><br>
+
     <label>5. <span></span></label>
     <input type="number" id="q5"><br>
   </div>
+
   <button onclick="checkTest()">Tugallash</button>
 </div>
 
@@ -37,9 +48,24 @@
   <p id="score"></p>
   <div id="recommendation"></div>
   <p id="nextTopicBtn"></p>
+
   <button onclick="restartTest()">Qayta boshlash</button>
 </div>
 
+<script>
+// ADMIN KIRISH FUNKSIYA
+function openAdmin() {
+  let password = prompt("Admin parolni kiriting:");
+
+  if (password === "12345") {
+    window.location.href = "admin.html";
+  } else if (password !== null) {
+    alert("Parol noto‘g‘ri!");
+  }
+}
+</script>
+
 <script src="script.js"></script>
+
 </body>
 </html>
