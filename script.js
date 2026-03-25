@@ -2,7 +2,7 @@
 let questions = [];
 let answers = [];
 let userName = "";
-let timeLeft = 160;
+let timeLeft = 150; // test uchun 150 soniya
 let timerInterval;
 let difficulty = "easy";
 
@@ -47,19 +47,21 @@ function generateQuestions(){
 
   // DOM ga chiqarish
   for(let i=1; i<=5; i++){
-    document.querySelector(`#q${i}`)
-      .previousElementSibling
-      .querySelector("span").innerText = questions[i-1];
+    const qLabel = document.querySelector(`#q${i}`).previousElementSibling.querySelector("span");
+    if(qLabel) qLabel.innerText = questions[i-1];
   }
 }
 
 // TIMER
 function startTimer(){
-  timeLeft = 160;
+  clearInterval(timerInterval); // eski intervalni to‘xtatadi
+  timeLeft = 150; // har safar 150 soniyadan boshlaydi
+  document.getElementById("timer").innerText = "⏱️ "+timeLeft;
+
   timerInterval = setInterval(()=>{
-    document.getElementById("timer").innerText="⏱️ "+timeLeft;
     timeLeft--;
-    if(timeLeft < 0){
+    document.getElementById("timer").innerText="⏱️ "+timeLeft;
+    if(timeLeft <= 0){
       clearInterval(timerInterval);
       checkTest();
     }
@@ -84,6 +86,7 @@ function startTest(){
   generateQuestions();
   startTimer();
 }
+
 // Admin panelga kirish
 function openAdmin(){
   document.getElementById("adminLogin").style.display = "block";
@@ -101,6 +104,7 @@ function checkAdmin(){
     alert("Parol noto‘g‘ri!");
   }
 }
+
 // SAVE RESULT
 function saveResult(name,score){
   let data = JSON.parse(localStorage.getItem("results")) || [];
