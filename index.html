@@ -14,14 +14,17 @@
   <input type="text" id="firstName" placeholder="Ismingiz"><br>
   <input type="text" id="lastName" placeholder="Familiyangiz"><br>
 
+  <!-- Test boshlash tugmasi -->
   <button onclick="startTest()">Testni boshlash</button><br><br>
 
-  <!-- ADMIN KNOPKA -->
+  <!-- Admin knopka -->
   <button onclick="openAdmin()">Admin</button>
 
-  <!-- Admin parol input (faqat JS prompt ishlaydi) -->
-</div>
-
+  <!-- Admin parol input (dastlab yashirin) -->
+  <div id="adminLogin" style="display:none; margin-top:10px;">
+    <input type="password" id="adminPassword" placeholder="Admin parolni kiriting">
+    <button onclick="checkAdmin()">Kirish</button>
+  </div>
 <div class="container" id="test-section" style="display:none;">
   <h2 id="timer">⏱️ 150</h2>
 
