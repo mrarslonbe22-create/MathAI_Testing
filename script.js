@@ -98,6 +98,11 @@ function checkAdmin(){
   const input = document.getElementById("adminPassword").value.trim();
 
   if(input === adminPass){
+    window.location.href = "admin.html";
+  } else {
+    alert("Parol noto‘g‘ri!");
+  }
+}
     // To‘g‘ri bo‘lsa admin paneliga o‘tadi
     window.location.href = "admin.html";
   } else {
