@@ -8,6 +8,7 @@
 </head>
 <body>
 
+<!-- BOSHLANG'ICH BO'LIM -->
 <div class="container" id="start-section">
   <h1>MathAI – Mustaqil Ta'lim</h1>
 
@@ -25,6 +26,9 @@
     <input type="password" id="adminPassword" placeholder="Admin parolni kiriting">
     <button onclick="checkAdmin()">Kirish</button>
   </div>
+</div>
+
+<!-- TEST SEKSYASI -->
 <div class="container" id="test-section" style="display:none;">
   <h2 id="timer">⏱️ 150</h2>
 
@@ -48,6 +52,7 @@
   <button onclick="checkTest()">Tugallash</button>
 </div>
 
+<!-- NATIJA SEKSYASI -->
 <div class="container result-card" id="result-section" style="display:none;">
   <h2 id="greeting"></h2>
   <p id="score"></p>
@@ -57,20 +62,8 @@
   <button onclick="restartTest()">Qayta boshlash</button>
 </div>
 
-<script>
-// ADMIN KIRISH FUNKSIYA
-function openAdmin() {
-  let password = prompt("Admin parolni kiriting:");
-
-  if (password === "12345") {
-    window.location.href = "admin.html";
-  } else if (password !== null) {
-    alert("Parol noto‘g‘ri!");
-  }
-}
-</script>
-
-<script src="script.js"></script>
+<!-- JS fayl sahifa oxirida -->
+<script src="script.js" defer></script>
 
 </body>
 </html>
