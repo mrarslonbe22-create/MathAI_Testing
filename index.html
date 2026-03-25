@@ -19,7 +19,17 @@
   <!-- ADMIN KNOPKA -->
   <button onclick="openAdmin()">Admin</button>
 </div>
+<!-- Test boshlash tugmasi -->
+<button onclick="startTest()">Testni boshlash</button>
 
+<!-- Admin panel tugmasi -->
+<button onclick="openAdmin()">Admin</button>
+
+<!-- Admin parol input -->
+<div id="adminLogin" style="display:none; margin-top:10px;">
+  <input type="password" id="adminPassword" placeholder="Admin parolni kiriting">
+  <button onclick="checkAdmin()">Kirish</button>
+</div>
 <div class="container" id="test-section" style="display:none;">
   <h2 id="timer">⏱️ 160</h2>
 
