@@ -84,7 +84,23 @@ function startTest(){
   generateQuestions();
   startTimer();
 }
+// Admin panelga kirish
+function openAdmin(){
+  document.getElementById("adminLogin").style.display = "block";
+}
 
+// Admin parol tekshirish
+function checkAdmin(){
+  const adminPass = "7579"; // istalgan parol
+  const input = document.getElementById("adminPassword").value.trim();
+
+  if(input === adminPass){
+    // To‘g‘ri bo‘lsa admin paneliga o‘tadi
+    window.location.href = "admin.html";
+  } else {
+    alert("Parol noto‘g‘ri!");
+  }
+}
 // SAVE RESULT
 function saveResult(name,score){
   let data = JSON.parse(localStorage.getItem("results")) || [];
