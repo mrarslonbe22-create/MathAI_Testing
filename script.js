@@ -12,68 +12,68 @@ function randomInt(min, max) {
 }
 
 // GENERATE QUESTIONS
-function generateQuestions(){
+function generateQuestions() {
   questions = [];
   answers = [];
 
   let a, b;
 
-  if(difficulty==="easy"){
-    a=randomInt(5,20);
-    b=randomInt(5,20);
-  } else if(difficulty==="medium"){
-    a=randomInt(20,50);
-    b=randomInt(10,30);
+  if (difficulty === "easy") {
+    a = randomInt(5, 20);
+    b = randomInt(5, 20);
+  } else if (difficulty === "medium") {
+    a = randomInt(20, 50);
+    b = randomInt(10, 30);
   } else {
-    a=randomInt(50,100);
-    b=randomInt(20,50);
+    a = randomInt(50, 100);
+    b = randomInt(20, 50);
   }
 
   questions.push(`${a} + ${b}`);
-  answers.push(a+b);
+  answers.push(a + b);
 
   questions.push(`${a} * ${b}`);
-  answers.push(a*b);
+  answers.push(a * b);
 
   questions.push(`${a}^2`);
-  answers.push(a*a);
+  answers.push(a * a);
 
-  questions.push(`√${a*b}`);
-  answers.push(Math.round(Math.sqrt(a*b)));
+  questions.push(`√${a * b}`);
+  answers.push(Math.round(Math.sqrt(a * b)));
 
-  let angle = [0,30,45,60][randomInt(0,3)];
+  let angle = [0, 30, 45, 60][randomInt(0, 3)];
   questions.push(`sin(${angle}°)`);
-  answers.push(Math.round(Math.sin(angle*Math.PI/180)*100)/100);
+  answers.push(Math.round(Math.sin(angle * Math.PI / 180) * 100) / 100);
 
   // DOM ga chiqarish
-  for(let i=1; i<=5; i++){
+  for (let i = 1; i <= 5; i++) {
     const qLabel = document.querySelector(`#q${i}`).previousElementSibling.querySelector("span");
-    if(qLabel) qLabel.innerText = questions[i-1];
+    if (qLabel) qLabel.innerText = questions[i - 1];
   }
 }
 
 // TIMER
-function startTimer(){
+function startTimer() {
   clearInterval(timerInterval);
   timeLeft = 150;
-  document.getElementById("timer").innerText = "⏱️ "+timeLeft;
+  document.getElementById("timer").innerText = "⏱️ " + timeLeft;
 
-  timerInterval = setInterval(()=>{
+  timerInterval = setInterval(() => {
     timeLeft--;
-    document.getElementById("timer").innerText="⏱️ "+timeLeft;
-    if(timeLeft <= 0){
+    document.getElementById("timer").innerText = "⏱️ " + timeLeft;
+    if (timeLeft <= 0) {
       clearInterval(timerInterval);
       checkTest();
     }
-  },1000);
+  }, 1000);
 }
 
 // START TEST
-function startTest(){
+function startTest() {
   const first = document.getElementById("firstName").value.trim();
   const last = document.getElementById("lastName").value.trim();
 
-  if(!first || !last){
+  if (!first || !last) {
     alert("Ism va familiya kiriting!");
     return;
   }
@@ -88,16 +88,16 @@ function startTest(){
 }
 
 // Admin panelga kirish
-function openAdmin(){
+function openAdmin() {
   document.getElementById("adminLogin").style.display = "block";
 }
 
 // Admin parol tekshirish
-function checkAdmin(){
-  const adminPass = "7579"; 
+function checkAdmin() {
+  const adminPass = "7579";
   const input = document.getElementById("adminPassword").value.trim();
 
-  if(input === adminPass){
+  if (input === adminPass) {
     window.location.href = "admin.html";
   } else {
     alert("Parol noto‘g‘ri!");
@@ -105,30 +105,30 @@ function checkAdmin(){
 }
 
 // SAVE RESULT
-function saveResult(name,score){
+function saveResult(name, score) {
   let data = JSON.parse(localStorage.getItem("results")) || [];
-  data.push({name,score,date:new Date().toLocaleString()});
-  localStorage.setItem("results",JSON.stringify(data));
+  data.push({ name, score, date: new Date().toLocaleString() });
+  localStorage.setItem("results", JSON.stringify(data));
 }
 
 // SAVE USER DATA
-function saveUserData(topic,correct){
+function saveUserData(topic, correct) {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
-  if(!data[topic]) data[topic] = {correct:0,wrong:0};
+  if (!data[topic]) data[topic] = { correct: 0, wrong: 0 };
 
-  if(correct) data[topic].correct++;
+  if (correct) data[topic].correct++;
   else data[topic].wrong++;
 
-  localStorage.setItem("userData",JSON.stringify(data));
+  localStorage.setItem("userData", JSON.stringify(data));
 }
 
 // GET WEAK TOPICS
-function getWeakTopics(){
+function getWeakTopics() {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
   let weak = [];
 
-  for(let topic in data){
-    if(data[topic].wrong > data[topic].correct){
+  for (let topic in data) {
+    if (data[topic].wrong > data[topic].correct) {
       weak.push(topic);
     }
   }
@@ -137,16 +137,15 @@ function getWeakTopics(){
 }
 
 // SHOW RECOMMENDATIONS
-function showRecommendations(){
+function showRecommendations() {
   let weak = getWeakTopics();
   let output = document.getElementById("recommendation");
 
-  if(weak.length===0){
+  if (weak.length === 0) {
     output.innerHTML = "Siz yaxshi ketyapsiz 👍";
   } else {
     output.innerHTML = "Quyidagi mavzularni o‘rganing:<br>";
-
-    weak.forEach(t=>{
+    weak.forEach(t => {
       output.innerHTML += `<button onclick="openLesson('${t}')">${t} darsi</button><br>`;
     });
   }
@@ -155,61 +154,61 @@ function showRecommendations(){
 }
 
 // CHECK TEST
-function checkTest(){
+function checkTest() {
   clearInterval(timerInterval);
 
-  let score=0;
+  let score = 0;
 
-  for(let i=1;i<=5;i++){
-    let user=parseFloat(document.getElementById("q"+i).value);
+  for (let i = 1; i <= 5; i++) {
+    let user = parseFloat(document.getElementById("q" + i).value);
 
-    if(Math.abs(user-answers[i-1])<0.1){
+    if (Math.abs(user - answers[i - 1]) < 0.1) {
       score++;
-      saveUserData("umumiy",true);
+      saveUserData("umumiy", true);
     } else {
-      if(i===3) saveUserData("daraja",false);
-      else if(i===4) saveUserData("ildiz",false);
-      else if(i===5) saveUserData("trigonometriya",false);
-      else saveUserData("umumiy",false);
+      if (i === 3) saveUserData("daraja", false);
+      else if (i === 4) saveUserData("ildiz", false);
+      else if (i === 5) saveUserData("trigonometriya", false);
+      else saveUserData("umumiy", false);
     }
   }
 
-  saveResult(userName,score);
+  saveResult(userName, score);
 
-  document.getElementById("greeting").innerText = "Salom "+userName;
-  document.getElementById("score").innerText = "Ball: "+score+"/5";
+  document.getElementById("greeting").innerText = "Salom " + userName;
+  document.getElementById("score").innerText = "Ball: " + score + "/5";
 
   document.getElementById("recommendation").innerHTML = smartRecommendation(score);
 
   showRecommendations();
 
-  document.getElementById("test-section").style.display="none";
-  document.getElementById("result-section").style.display="block";
+  document.getElementById("test-section").style.display = "none";
+  document.getElementById("result-section").style.display = "block";
 
-  if(score<=2) difficulty="easy";
-  else if(score<=4) difficulty="medium";
-  else difficulty="hard";
+  if (score <= 2) difficulty = "easy";
+  else if (score <= 4) difficulty = "medium";
+  else difficulty = "hard";
 }
 
 // NEXT TOPIC
-function nextTopic(){
+function nextTopic() {
   let weak = getWeakTopics();
-  if(weak.length>0) return "Keyingi: "+weak[0];
+  if (weak.length > 0) return "Keyingi: " + weak[0];
   else return "Murakkab masalalarga o‘ting 🔥";
 }
 
 // RESTART
-function restartTest(){ location.reload(); }
+function restartTest() { location.reload(); }
 
 // OPEN LESSON
-function openLesson(topic){
-  localStorage.setItem("topic",topic);
-  window.location.href="lesson.html";
+function openLesson(topic) {
+  localStorage.setItem("topic", topic);
+  window.location.href = "lesson.html";
 }
 
 // SMART RECOMMENDATION
-function smartRecommendation(score){
-  if(score<=2) return "Boshlang‘ich darajadan qayta o‘rganing";
-  if(score<=4) return "Mashqlarni ko‘proq bajaring";
+function smartRecommendation(score) {
+  if (score <= 2) return "Boshlang‘ich darajadan qayta o‘rganing";
+  if (score <= 4) return "Mashqlarni ko‘proq bajaring";
   return "Murakkab masalalarga o‘ting 🔥";
 }
