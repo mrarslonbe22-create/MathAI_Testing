@@ -54,8 +54,8 @@ function generateQuestions(){
 
 // TIMER
 function startTimer(){
-  clearInterval(timerInterval); // eski intervalni to‘xtatadi
-  timeLeft = 150; // har safar 150 soniyadan boshlaydi
+  clearInterval(timerInterval);
+  timeLeft = 150;
   document.getElementById("timer").innerText = "⏱️ "+timeLeft;
 
   timerInterval = setInterval(()=>{
@@ -94,16 +94,10 @@ function openAdmin(){
 
 // Admin parol tekshirish
 function checkAdmin(){
-  const adminPass = "7579"; // istalgan parol
+  const adminPass = "7579"; 
   const input = document.getElementById("adminPassword").value.trim();
 
   if(input === adminPass){
-    window.location.href = "admin.html";
-  } else {
-    alert("Parol noto‘g‘ri!");
-  }
-}
-    // To‘g‘ri bo‘lsa admin paneliga o‘tadi
     window.location.href = "admin.html";
   } else {
     alert("Parol noto‘g‘ri!");
