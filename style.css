@@ -1,13 +1,24 @@
-/* RESET */
-body {
+/* ================= RESET ================= */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: 'Poppins', Arial, sans-serif;
+}
+
+/* ================= BODY ================= */
+body {
   background: linear-gradient(135deg, #1e1e2f, #3a3a5a);
   color: white;
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
 }
 
-/* CONTAINER */
+/* ================= CONTAINER ================= */
 .container {
   background: rgba(255,255,255,0.08);
   padding: 25px;
@@ -15,7 +26,7 @@ body {
   backdrop-filter: blur(12px);
   width: 90%;
   max-width: 500px;
-  margin: 40px auto;
+  margin-bottom: 40px;
   box-shadow: 0 0 25px rgba(0,0,0,0.4);
   transition: 0.3s;
 }
@@ -24,8 +35,8 @@ body {
   transform: translateY(-3px);
 }
 
-/* INPUT */
-input {
+/* ================= INPUTS ================= */
+input[type="text"], input[type="password"], input[type="number"] {
   padding: 12px;
   width: 85%;
   margin: 10px 0;
@@ -35,7 +46,7 @@ input {
   font-size: 15px;
 }
 
-/* BUTTON */
+/* ================= BUTTONS ================= */
 button {
   padding: 12px 20px;
   margin: 10px;
@@ -53,7 +64,7 @@ button:hover {
   background: linear-gradient(135deg, #45a049, #1b5e20);
 }
 
-/* ADMIN BUTTON (maxsus rang) */
+/* Admin panel button maxsus rang */
 button:last-of-type {
   background: linear-gradient(135deg, #ff9800, #e65100);
 }
@@ -62,7 +73,7 @@ button:last-of-type:hover {
   background: linear-gradient(135deg, #fb8c00, #bf360c);
 }
 
-/* RESULT & LESSON CARDS */
+/* ================= RESULTS & LESSON CARDS ================= */
 .result-card,
 .lesson-card {
   background: rgba(0,0,0,0.35);
@@ -71,7 +82,7 @@ button:last-of-type:hover {
   border-radius: 12px;
 }
 
-/* TABLE (ADMIN) */
+/* ================= TABLE ================= */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -92,28 +103,31 @@ th {
   color: white;
 }
 
-/* TIMER */
+/* ================= TIMER ================= */
 #timer {
   font-size: 24px;
   margin-bottom: 15px;
   font-weight: bold;
 }
 
-/* QUESTIONS */
+/* ================= QUESTIONS ================= */
 label {
   display: block;
   margin-top: 10px;
 }
 
-/* AI BOX */
+/* ================= AI BOX ================= */
 #aiContent {
   background: rgba(255,255,255,0.1);
   padding: 10px;
   border-radius: 10px;
   margin-top: 10px;
+  min-height: 50px;
+  font-size: 14px;
+  text-align: left;
 }
 
-/* RESPONSIVE */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 600px) {
   .container {
     width: 95%;
