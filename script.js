@@ -196,7 +196,29 @@ function nextTopic() {
   if (weak.length > 0) return "Keyingi: " + weak[0];
   else return "Murakkab masalalarga o‘ting 🔥";
 }
+async function askAI() {
+  let question = prompt("Savolingni yoz (masalan: sin 30 nima?)");
 
+  if (!question) return;
+
+  let response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "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"
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "Sen matematika o‘qituvchisan. Oddiy qilib tushuntir." },
+        { role: "user", content: question }
+      ]
+    })
+  });
+
+  let data = await response.json();
+  alert(data.choices[0].message.content);
+}
 // RESTART
 function restartTest() { location.reload(); }
 
