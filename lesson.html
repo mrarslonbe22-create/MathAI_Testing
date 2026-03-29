@@ -41,7 +41,7 @@ const lessons = {
     title: "Ildiz",
     content: `
       <h3>Formulalar:</h3>
-      <p>√a × √b = √ab</p>
+      <p>√a × √b = √(a*b)</p>
       <p>√(a²) = a</p>
 
       <h3>Nazariya:</h3>
@@ -62,6 +62,7 @@ const lessons = {
   }
 };
 
+// Statik darslarni ko‘rsatish
 if (!lessons[topic]) {
   document.getElementById("title").innerText = "Mavzu topilmadi";
   document.getElementById("content").innerHTML = "";
@@ -70,7 +71,7 @@ if (!lessons[topic]) {
   document.getElementById("content").innerHTML = lessons[topic].content;
 }
 
-// AI funksiya
+// AI yordam funksiyasi
 async function askAI(question){
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
