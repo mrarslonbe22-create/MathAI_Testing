@@ -1,4 +1,4 @@
-// GLOBAL VARIABLES
+// ==================== GLOBAL VARIABLES ====================
 let questions = [];
 let answers = [];
 let userName = "";
@@ -6,12 +6,12 @@ let timeLeft = 150; // test uchun 150 soniya
 let timerInterval;
 let difficulty = "easy";
 
-// RANDOM INT
+// ==================== RANDOM INT FUNCTION ====================
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// GENERATE QUESTIONS
+// ==================== GENERATE QUESTIONS ====================
 function generateQuestions() {
   questions = [];
   answers = [];
@@ -29,6 +29,7 @@ function generateQuestions() {
     b = randomInt(20, 50);
   }
 
+  // 5 ta test savoli
   questions.push(`${a} + ${b}`);
   answers.push(a + b);
 
@@ -41,7 +42,8 @@ function generateQuestions() {
   questions.push(`√${a * b}`);
   answers.push(Math.round(Math.sqrt(a * b)));
 
-  let angle = [0, 30, 45, 60][randomInt(0, 3)];
+  let angleArr = [0, 30, 45, 60];
+  let angle = angleArr[randomInt(0, angleArr.length - 1)];
   questions.push(`sin(${angle}°)`);
   answers.push(Math.round(Math.sin(angle * Math.PI / 180) * 100) / 100);
 
@@ -52,7 +54,7 @@ function generateQuestions() {
   }
 }
 
-// TIMER
+// ==================== TIMER ====================
 function startTimer() {
   clearInterval(timerInterval);
   timeLeft = 150;
@@ -68,7 +70,7 @@ function startTimer() {
   }, 1000);
 }
 
-// START TEST
+// ==================== START TEST ====================
 function startTest() {
   const first = document.getElementById("firstName").value.trim();
   const last = document.getElementById("lastName").value.trim();
@@ -87,12 +89,11 @@ function startTest() {
   startTimer();
 }
 
-// Admin panelga kirish
+// ==================== ADMIN PANEL ====================
 function openAdmin() {
   document.getElementById("adminLogin").style.display = "block";
 }
 
-// Admin parol tekshirish
 function checkAdmin() {
   const adminPass = "7579";
   const input = document.getElementById("adminPassword").value.trim();
@@ -104,14 +105,14 @@ function checkAdmin() {
   }
 }
 
-// SAVE RESULT
+// ==================== SAVE RESULT ====================
 function saveResult(name, score) {
   let data = JSON.parse(localStorage.getItem("results")) || [];
   data.push({ name, score, date: new Date().toLocaleString() });
   localStorage.setItem("results", JSON.stringify(data));
 }
 
-// SAVE USER DATA
+// ==================== SAVE USER DATA ====================
 function saveUserData(topic, correct) {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
   if (!data[topic]) data[topic] = { correct: 0, wrong: 0 };
@@ -122,7 +123,7 @@ function saveUserData(topic, correct) {
   localStorage.setItem("userData", JSON.stringify(data));
 }
 
-// GET WEAK TOPICS
+// ==================== GET WEAK TOPICS ====================
 function getWeakTopics() {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
   let weak = [];
@@ -136,7 +137,7 @@ function getWeakTopics() {
   return weak;
 }
 
-// SHOW RECOMMENDATIONS
+// ==================== SHOW RECOMMENDATIONS ====================
 function showRecommendations() {
   let weak = getWeakTopics();
   let output = document.getElementById("recommendation");
@@ -153,7 +154,7 @@ function showRecommendations() {
   document.getElementById("nextTopicBtn").innerText = nextTopic();
 }
 
-// CHECK TEST
+// ==================== CHECK TEST ====================
 function checkTest() {
   clearInterval(timerInterval);
 
@@ -190,45 +191,53 @@ function checkTest() {
   else difficulty = "hard";
 }
 
-// NEXT TOPIC
+// ==================== NEXT TOPIC ====================
 function nextTopic() {
   let weak = getWeakTopics();
   if (weak.length > 0) return "Keyingi: " + weak[0];
   else return "Murakkab masalalarga o‘ting 🔥";
 }
+
+// ==================== AI HELPER ====================
 async function askAI() {
   let question = prompt("Savolingni yoz (masalan: sin 30 nima?)");
 
   if (!question) return;
 
-  let response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "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"
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "Sen matematika o‘qituvchisan. Oddiy qilib tushuntir." },
-        { role: "user", content: question }
-      ]
-    })
-  });
+  try {
+    let response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer REPLACE_WITH_YOUR_API_KEY" // <-- OpenAI API keyni shu yerga qo'yasiz
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "Sen matematika o‘qituvchisan. Oddiy qilib tushuntir." },
+          { role: "user", content: question }
+        ]
+      })
+    });
 
-  let data = await response.json();
-  alert(data.choices[0].message.content);
+    let data = await response.json();
+    alert(data.choices[0].message.content);
+  } catch (err) {
+    console.error(err);
+    alert("AI ishlamayapti (API key xato yoki yo‘q)");
+  }
 }
-// RESTART
+
+// ==================== RESTART ====================
 function restartTest() { location.reload(); }
 
-// OPEN LESSON
+// ==================== OPEN LESSON ====================
 function openLesson(topic) {
   localStorage.setItem("topic", topic);
   window.location.href = "lesson.html";
 }
 
-// SMART RECOMMENDATION
+// ==================== SMART RECOMMENDATION ====================
 function smartRecommendation(score) {
   if (score <= 2) return "Boshlang‘ich darajadan qayta o‘rganing";
   if (score <= 4) return "Mashqlarni ko‘proq bajaring";
