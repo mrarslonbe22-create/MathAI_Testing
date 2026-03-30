@@ -2,11 +2,11 @@
 let questions = [];
 let answers = [];
 let userName = "";
-let timeLeft = 150; // test uchun 150 soniya
+let timeLeft = 150;
 let timerInterval;
 let difficulty = "easy";
 
-// ==================== RANDOM INT FUNCTION ====================
+// ==================== RANDOM INT ====================
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -29,7 +29,6 @@ function generateQuestions() {
     b = randomInt(20, 50);
   }
 
-  // 5 ta test savoli
   questions.push(`${a} + ${b}`);
   answers.push(a + b);
 
@@ -40,27 +39,20 @@ function generateQuestions() {
   answers.push(a * a);
 
   questions.push(`√${a * b}`);
-  answers.push(Math.round(Math.sqrt(a * b)));
+  answers.push(Math.sqrt(a * b));
 
   let angleArr = [0, 30, 45, 60];
   let angle = angleArr[randomInt(0, angleArr.length - 1)];
   questions.push(`sin(${angle}°)`);
-  answers.push(Math.round(Math.sin(angle * Math.PI / 180) * 100) / 100);
-let difficulty = 1;
+  answers.push(Math.sin(angle * Math.PI / 180));
 
-function updateDifficulty(correct){
-  if(correct){
-    difficulty++;
-  } else {
-    difficulty--;
-  }
-
-  difficulty = Math.max(1, Math.min(3, difficulty));
-}
   // DOM ga chiqarish
   for (let i = 1; i <= 5; i++) {
-    const qLabel = document.querySelector(`#q${i}`).previousElementSibling.querySelector("span");
-    if (qLabel) qLabel.innerText = questions[i - 1];
+    let label = document.querySelector(`#q${i}`);
+    if (label && label.previousElementSibling) {
+      let span = label.previousElementSibling.querySelector("span");
+      if (span) span.innerText = questions[i - 1];
+    }
   }
 }
 
@@ -68,11 +60,13 @@ function updateDifficulty(correct){
 function startTimer() {
   clearInterval(timerInterval);
   timeLeft = 150;
+
   document.getElementById("timer").innerText = "⏱️ " + timeLeft;
 
   timerInterval = setInterval(() => {
     timeLeft--;
     document.getElementById("timer").innerText = "⏱️ " + timeLeft;
+
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       checkTest();
@@ -99,7 +93,7 @@ function startTest() {
   startTimer();
 }
 
-// ==================== ADMIN PANEL ====================
+// ==================== ADMIN ====================
 function openAdmin() {
   document.getElementById("adminLogin").style.display = "block";
 }
@@ -125,6 +119,7 @@ function saveResult(name, score) {
 // ==================== SAVE USER DATA ====================
 function saveUserData(topic, correct) {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
+
   if (!data[topic]) data[topic] = { correct: 0, wrong: 0 };
 
   if (correct) data[topic].correct++;
@@ -133,7 +128,7 @@ function saveUserData(topic, correct) {
   localStorage.setItem("userData", JSON.stringify(data));
 }
 
-// ==================== GET WEAK TOPICS ====================
+// ==================== WEAK TOPICS ====================
 function getWeakTopics() {
   let data = JSON.parse(localStorage.getItem("userData")) || {};
   let weak = [];
@@ -147,7 +142,7 @@ function getWeakTopics() {
   return weak;
 }
 
-// ==================== SHOW RECOMMENDATIONS ====================
+// ==================== RECOMMEND ====================
 function showRecommendations() {
   let weak = getWeakTopics();
   let output = document.getElementById("recommendation");
@@ -156,6 +151,7 @@ function showRecommendations() {
     output.innerHTML = "Siz yaxshi ketyapsiz 👍";
   } else {
     output.innerHTML = "Quyidagi mavzularni o‘rganing:<br>";
+
     weak.forEach(t => {
       output.innerHTML += `<button onclick="openLesson('${t}')">${t} darsi</button><br>`;
     });
@@ -173,7 +169,7 @@ function checkTest() {
   for (let i = 1; i <= 5; i++) {
     let user = parseFloat(document.getElementById("q" + i).value);
 
-    if (Math.abs(user - answers[i - 1]) < 0.1) {
+    if (!isNaN(user) && Math.abs(user - answers[i - 1]) < 0.1) {
       score++;
       saveUserData("umumiy", true);
     } else {
@@ -205,55 +201,36 @@ function checkTest() {
 function nextTopic() {
   let weak = getWeakTopics();
   if (weak.length > 0) return "Keyingi: " + weak[0];
-  else return "Murakkab masalalarga o‘ting 🔥";
+  return "Murakkab masalalarga o‘ting 🔥";
 }
 
-// ==================== AI HELPER ====================
-async function askAI() {
-  let question = prompt("Savolingni yoz (masalan: sin 30 nima?)");
+// ==================== AI (oddiy fallback) ====================
+function askAI() {
+  let question = prompt("Savolingni yoz:");
 
   if (!question) return;
 
-  try {
-    let response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer REPLACE_WITH_YOUR_API_KEY" // <-- OpenAI API keyni shu yerga qo'yasiz
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "Sen matematika o‘qituvchisan. Oddiy qilib tushuntir." },
-          { role: "user", content: question }
-        ]
-      })
-    });
+  if (question.includes("sin 30")) {
+    alert("sin 30 = 0.5");
+  } else {
+    alert("Hozircha AI backend ulanmagan");
+  }
+}
 
-    let data = await response.json();
-    alert(data.choices[0].message.content);
-  } catch (err) {
-    console.error(err);
-    alert("AI ishlamayapti (API key xato yoki yo‘q)");
-  }
-}
-function aiAnswer(question){
-  if(question.includes("sin 30")){
-    return "sin 30 = 0.5";
-  }
-}
 // ==================== RESTART ====================
-function restartTest() { location.reload(); }
+function restartTest() {
+  location.reload();
+}
 
-// ==================== OPEN LESSON ====================
+// ==================== LESSON ====================
 function openLesson(topic) {
   localStorage.setItem("topic", topic);
   window.location.href = "lesson.html";
 }
 
-// ==================== SMART RECOMMENDATION ====================
+// ==================== SMART RECOMMEND ====================
 function smartRecommendation(score) {
   if (score <= 2) return "Boshlang‘ich darajadan qayta o‘rganing";
-  if (score <= 4) return "Mashqlarni ko‘proq bajaring";
-  return "Murakkab masalalarga o‘ting 🔥";
+  if (score <= 4) return "Ko‘proq mashq qiling";
+  return "Murakkab darajaga o‘ting 🔥";
 }
