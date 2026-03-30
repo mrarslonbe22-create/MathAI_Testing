@@ -46,7 +46,17 @@ function generateQuestions() {
   let angle = angleArr[randomInt(0, angleArr.length - 1)];
   questions.push(`sin(${angle}°)`);
   answers.push(Math.round(Math.sin(angle * Math.PI / 180) * 100) / 100);
+let difficulty = 1;
 
+function updateDifficulty(correct){
+  if(correct){
+    difficulty++;
+  } else {
+    difficulty--;
+  }
+
+  difficulty = Math.max(1, Math.min(3, difficulty));
+}
   // DOM ga chiqarish
   for (let i = 1; i <= 5; i++) {
     const qLabel = document.querySelector(`#q${i}`).previousElementSibling.querySelector("span");
@@ -227,7 +237,11 @@ async function askAI() {
     alert("AI ishlamayapti (API key xato yoki yo‘q)");
   }
 }
-
+function aiAnswer(question){
+  if(question.includes("sin 30")){
+    return "sin 30 = 0.5";
+  }
+}
 // ==================== RESTART ====================
 function restartTest() { location.reload(); }
 
