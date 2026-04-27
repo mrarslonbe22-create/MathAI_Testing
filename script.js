@@ -1,236 +1,264 @@
-// ==================== GLOBAL VARIABLES ====================
-let questions = [];
-let answers = [];
-let userName = "";
-let timeLeft = 150;
-let timerInterval;
-let difficulty = "easy";
+// ============================================
+// MA'LUMOTLAR
+// ============================================
+const yillar = [2020, 2021, 2022, 2023, 2024, 2025];
+const aholi = [34558.9, 35271.3, 35874.4, 36421.8, 37543.2, 38236.7];
+const bandlar = [13200, 13450, 13780, 14100, 14500, 14850];
+const mlya = [19500, 19800, 20100, 20450, 21200, 21700];
+const kambagal = [5200, 4900, 4600, 4010, 3200, 2220];
+const mehnatResurslari = [20200, 20500, 20850, 21100, 21800, 22300];
+const iqtisodiyNofaol = [5500, 5600, 5650, 5700, 5800, 5900];
 
-// ==================== RANDOM INT ====================
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// Hisoblangan ko'rsatkichlar
+let bandlikFoizi = [];
+let kambagallikFoizi = [];
+let ishsizlar = [];
 
-// ==================== GENERATE QUESTIONS ====================
-function generateQuestions() {
-  questions = [];
-  answers = [];
+// Grafik o'zgaruvchilari
+let mainChart = null;
+let prognozChart = null;
 
-  let a, b;
-
-  if (difficulty === "easy") {
-    a = randomInt(5, 20);
-    b = randomInt(5, 20);
-  } else if (difficulty === "medium") {
-    a = randomInt(20, 50);
-    b = randomInt(10, 30);
-  } else {
-    a = randomInt(50, 100);
-    b = randomInt(20, 50);
-  }
-
-  questions.push(`${a} + ${b}`);
-  answers.push(a + b);
-
-  questions.push(`${a} * ${b}`);
-  answers.push(a * b);
-
-  questions.push(`${a}^2`);
-  answers.push(a * a);
-
-  questions.push(`√${a * b}`);
-  answers.push(Math.sqrt(a * b));
-
-  let angleArr = [0, 30, 45, 60];
-  let angle = angleArr[randomInt(0, angleArr.length - 1)];
-  questions.push(`sin(${angle}°)`);
-  answers.push(Math.sin(angle * Math.PI / 180));
-
-  // DOM ga chiqarish
-  for (let i = 1; i <= 5; i++) {
-    let label = document.querySelector(`#q${i}`);
-    if (label && label.previousElementSibling) {
-      let span = label.previousElementSibling.querySelector("span");
-      if (span) span.innerText = questions[i - 1];
+// ============================================
+// HISOBLASH FUNKSIYALARI
+// ============================================
+function calculateAll() {
+    bandlikFoizi = [];
+    kambagallikFoizi = [];
+    ishsizlar = [];
+    
+    for(let i = 0; i < yillar.length; i++) {
+        bandlikFoizi.push(parseFloat((bandlar[i] / mlya[i] * 100).toFixed(2)));
+        kambagallikFoizi.push(parseFloat((kambagal[i] / aholi[i] * 100).toFixed(2)));
+        ishsizlar.push(mehnatResurslari[i] - bandlar[i] - iqtisodiyNofaol[i]);
     }
-  }
 }
 
-// ==================== TIMER ====================
-function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft = 150;
+// ============================================
+// STATISTIK KARTALARNI YANGILASH
+// ============================================
+function updateStatCards() {
+    const lastIndex = yillar.length - 1;
+    const prevIndex = lastIndex - 1;
+    
+    // Aholi
+    document.getElementById('current_aholi').innerHTML = aholi[lastIndex].toLocaleString();
+    let aholiChange = ((aholi[lastIndex] - aholi[prevIndex]) / aholi[prevIndex] * 100).toFixed(2);
+    let aholiElem = document.getElementById('aholi_change');
+    aholiElem.innerHTML = (aholiChange > 0 ? '📈 +' : '📉 ') + aholiChange + '%';
+    aholiElem.className = 'stat-change ' + (aholiChange > 0 ? 'positive' : 'negative');
+    
+    // Bandlik
+    document.getElementById('current_bandlik').innerHTML = bandlikFoizi[lastIndex];
+    let bandlikChange = (bandlikFoizi[lastIndex] - bandlikFoizi[prevIndex]).toFixed(2);
+    let bandlikElem = document.getElementById('bandlik_change');
+    bandlikElem.innerHTML = (bandlikChange > 0 ? '📈 +' : '📉 ') + bandlikChange + '%';
+    bandlikElem.className = 'stat-change ' + (bandlikChange > 0 ? 'positive' : 'negative');
+    
+    // Kambag'allik
+    document.getElementById('current_kambagal').innerHTML = kambagallikFoizi[lastIndex];
+    let kambagalChange = (kambagallikFoizi[lastIndex] - kambagallikFoizi[prevIndex]).toFixed(2);
+    let kambagalElem = document.getElementById('kambagal_change');
+    kambagalElem.innerHTML = (kambagalChange > 0 ? '📈 +' : '📉 ') + Math.abs(kambagalChange) + '%';
+    kambagalElem.className = 'stat-change ' + (kambagalChange < 0 ? 'positive' : 'negative');
+    
+    // Ishsizlar
+    document.getElementById('current_ishsiz').innerHTML = (ishsizlar[lastIndex] / 1000).toFixed(1);
+    let ishsizChange = ((ishsizlar[lastIndex] - ishsizlar[prevIndex]) / ishsizlar[prevIndex] * 100).toFixed(2);
+    let ishsizElem = document.getElementById('ishsiz_change');
+    ishsizElem.innerHTML = (ishsizChange > 0 ? '📈 +' : '📉 ') + Math.abs(ishsizChange) + '%';
+    ishsizElem.className = 'stat-change ' + (ishsizChange < 0 ? 'positive' : 'negative');
+}
 
-  document.getElementById("timer").innerText = "⏱️ " + timeLeft;
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    document.getElementById("timer").innerText = "⏱️ " + timeLeft;
-
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      checkTest();
+// ============================================
+// JADVALNI TO'LDIRISH
+// ============================================
+function updateTable() {
+    let html = '';
+    for(let i = 0; i < yillar.length; i++) {
+        html += `<tr>
+            <td>${yillar[i]}</td>
+            <td>${aholi[i].toLocaleString()}</td>
+            <td>${bandlar[i]}</td>
+            <td>${mlya[i]}</td>
+            <td>${kambagal[i]}</td>
+            <td>${bandlikFoizi[i]}%</td>
+            <td>${kambagallikFoizi[i]}%</td>
+            <td>${ishsizlar[i]}</td>
+        </tr>`;
     }
-  }, 1000);
+    document.getElementById('tableBody').innerHTML = html;
 }
 
-// ==================== START TEST ====================
-function startTest() {
-  const first = document.getElementById("firstName").value.trim();
-  const last = document.getElementById("lastName").value.trim();
+// ============================================
+// 10 TA IJTIMOIY MASALA KARTALARI
+// ============================================
+const problems = [
+    { name: "Kambag'allik", formula: "P = (N_poor / N_total) × 100%", solution: "Ijtimoiy yordam, ish o'rinlari yaratish", get: () => kambagallikFoizi, unit: "%", trend: "down" },
+    { name: "Ishsizlik", formula: "U = (Unemployed / Labor_force) × 100%", solution: "Kasb-hunar o'rgatish, ish yarmarkalari", get: () => ishsizlar.map((u,i) => (u / mehnatResurslari[i] * 100).toFixed(2)), unit: "%", trend: "down" },
+    { name: "Demografik yuk", formula: "DR = (0-14 yosh + 65+ yosh) / 15-64 yosh × 100%", solution: "Pensiya islohoti, bola nafaqalari", get: () => [49.2,49.5,49.6,49.7,49.6,49.7], unit: "%", trend: "up" },
+    { name: "Bandlik", formula: "ER = (Employed / Labor_force) × 100%", solution: "Tadbirkorlikni qo'llab-quvvatlash", get: () => bandlikFoizi, unit: "%", trend: "up" },
+    { name: "Pensiya yuki", formula: "PR = (Elderly / Working_age) × 100%", solution: "Pensiya jamg'armasini kuchaytirish", get: () => [9.3,9.3,9.3,9.3,9.2,9.2], unit: "%", trend: "up" },
+    { name: "Daromad tengsizligi", formula: "Gini = 1 - Σ(p_i)(2Q_i-1)", solution: "Progressiv soliq, ijtimoiy transfertlar", get: () => [32.5,32.1,31.8,31.2,30.5,29.8], unit: "ball", trend: "down" },
+    { name: "Migratsiya saldosi", formula: "NM = Immigration - Emigration", solution: "Mahalliy ish o'rinlari, mintaqaviy rivojlanish", get: () => [25,17,6,-3,-15,-25], unit: "ming", trend: "down" },
+    { name: "Uy-joy ta'minoti", formula: "HR = Housing_units / Households × 100%", solution: "Ijtimoiy uy-joy, ipoteka dasturlari", get: () => [93.5,93.7,93.8,94.0,94.1,94.2], unit: "%", trend: "up" },
+    { name: "Inson taraqqiyoti indeksi", formula: "HDI = (Life+Edu+Income)/3", solution: "Ta'lim va sog'liqni saqlashni rivojlantirish", get: () => [71.2,72.1,73.0,73.8,74.5,75.2], unit: "ball", trend: "up" },
+    { name: "Aholi zichligi", formula: "D = Population / Area", solution: "Shaharlashtirish, infratuzilmani rivojlantirish", get: () => [77.8,79.4,80.8,82.0,84.5,86.1], unit: "kishi/km²", trend: "up" }
+];
 
-  if (!first || !last) {
-    alert("Ism va familiya kiriting!");
-    return;
-  }
-
-  userName = first + " " + last;
-
-  document.getElementById("start-section").style.display = "none";
-  document.getElementById("test-section").style.display = "block";
-
-  generateQuestions();
-  startTimer();
-}
-
-// ==================== ADMIN ====================
-function openAdmin() {
-  document.getElementById("adminLogin").style.display = "block";
-}
-
-function checkAdmin() {
-  const adminPass = "7579";
-  const input = document.getElementById("adminPassword").value.trim();
-
-  if (input === adminPass) {
-    window.location.href = "admin.html";
-  } else {
-    alert("Parol noto‘g‘ri!");
-  }
-}
-
-// ==================== SAVE RESULT ====================
-function saveResult(name, score) {
-  let data = JSON.parse(localStorage.getItem("results")) || [];
-  data.push({ name, score, date: new Date().toLocaleString() });
-  localStorage.setItem("results", JSON.stringify(data));
-}
-
-// ==================== SAVE USER DATA ====================
-function saveUserData(topic, correct) {
-  let data = JSON.parse(localStorage.getItem("userData")) || {};
-
-  if (!data[topic]) data[topic] = { correct: 0, wrong: 0 };
-
-  if (correct) data[topic].correct++;
-  else data[topic].wrong++;
-
-  localStorage.setItem("userData", JSON.stringify(data));
-}
-
-// ==================== WEAK TOPICS ====================
-function getWeakTopics() {
-  let data = JSON.parse(localStorage.getItem("userData")) || {};
-  let weak = [];
-
-  for (let topic in data) {
-    if (data[topic].wrong > data[topic].correct) {
-      weak.push(topic);
+function renderProblems() {
+    const grid = document.getElementById('problemsGrid');
+    grid.innerHTML = '';
+    for(let i = 0; i < problems.length; i++) {
+        const p = problems[i];
+        const val = p.get();
+        const last = val[val.length-1];
+        const first = val[0];
+        const change = (last - first).toFixed(1);
+        grid.innerHTML += `
+            <div class="problem-card">
+                <h3>${i+1}. ${p.name} muammosi</h3>
+                <div class="formula">📐 ${p.formula}</div>
+                <div class="result">${last}${p.unit}</div>
+                <div class="${p.trend === 'up' ? 'trend-up' : 'trend-down'}">
+                    ${p.trend === 'up' ? '📈 +' : '📉 '}${Math.abs(change)}${p.unit}
+                </div>
+                <div class="solution">💡 Yechim: ${p.solution}</div>
+            </div>
+        `;
     }
-  }
-
-  return weak;
 }
 
-// ==================== RECOMMEND ====================
-function showRecommendations() {
-  let weak = getWeakTopics();
-  let output = document.getElementById("recommendation");
+// ============================================
+// GRAFIKLAR
+// ============================================
+const graphs = [
+    { name: "Aholi soni", get: () => aholi, color: "#1a73e8", label: "Aholi soni (ming kishi)" },
+    { name: "Kambag'allik", get: () => kambagallikFoizi, color: "#dc3545", label: "Kambag'allik (%)" },
+    { name: "Bandlik", get: () => bandlikFoizi, color: "#28a745", label: "Bandlik (%)" },
+    { name: "Ishsizlar", get: () => ishsizlar, color: "#fd7e14", label: "Ishsizlar (ming kishi)" },
+    { name: "HDI indeksi", get: () => problems[8].get(), color: "#6f42c1", label: "Inson taraqqiyoti indeksi (ball)" }
+];
 
-  if (weak.length === 0) {
-    output.innerHTML = "Siz yaxshi ketyapsiz 👍";
-  } else {
-    output.innerHTML = "Quyidagi mavzularni o‘rganing:<br>";
-
-    weak.forEach(t => {
-      output.innerHTML += `<button onclick="openLesson('${t}')">${t} darsi</button><br>`;
+function renderGraphButtons() {
+    const container = document.getElementById('graphButtons');
+    container.innerHTML = '';
+    graphs.forEach((g, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'graph-btn' + (idx === 0 ? ' active' : '');
+        btn.textContent = g.name;
+        btn.onclick = () => {
+            document.querySelectorAll('.graph-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateGraph(g);
+        };
+        container.appendChild(btn);
     });
-  }
-
-  document.getElementById("nextTopicBtn").innerText = nextTopic();
 }
 
-// ==================== CHECK TEST ====================
-function checkTest() {
-  clearInterval(timerInterval);
+function updateGraph(g) {
+    if(mainChart) mainChart.destroy();
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: yillar,
+            datasets: [{
+                label: g.label,
+                data: g.get(),
+                borderColor: g.color,
+                backgroundColor: g.color + '20',
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: g.color,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.raw} ${g.label.includes('%') ? '%' : ''}`
+                    }
+                }
+            }
+        }
+    });
+}
 
-  let score = 0;
-
-  for (let i = 1; i <= 5; i++) {
-    let user = parseFloat(document.getElementById("q" + i).value);
-
-    if (!isNaN(user) && Math.abs(user - answers[i - 1]) < 0.1) {
-      score++;
-      saveUserData("umumiy", true);
-    } else {
-      if (i === 3) saveUserData("daraja", false);
-      else if (i === 4) saveUserData("ildiz", false);
-      else if (i === 5) saveUserData("trigonometriya", false);
-      else saveUserData("umumiy", false);
+// ============================================
+// PROGNOZ
+// ============================================
+function calculatePrognoz() {
+    // Chiziqli trend
+    let t = [...Array(aholi.length).keys()];
+    let n = aholi.length;
+    let sumT = t.reduce((a,b) => a+b, 0);
+    let sumY = aholi.reduce((a,b) => a+b, 0);
+    let sumTY = t.reduce((a,b,i) => a + b*aholi[i], 0);
+    let sumT2 = t.reduce((a,b) => a + b*b, 0);
+    
+    let slope = (n*sumTY - sumT*sumY) / (n*sumT2 - sumT*sumT);
+    let intercept = (sumY - slope*sumT) / n;
+    
+    let prog2026 = intercept + slope * n;
+    let prog2030 = intercept + slope * (n + 4);
+    
+    document.getElementById('linear_prognoz').innerHTML = prog2026.toFixed(1);
+    document.getElementById('linear_formula').innerHTML = `y = ${intercept.toFixed(2)} + ${slope.toFixed(2)}·t`;
+    document.getElementById('prognoz_2030').innerHTML = prog2030.toFixed(1);
+    
+    // CAGR
+    let cagr = Math.pow(aholi[n-1] / aholi[0], 1/(n-1)) - 1;
+    let cagrProg = aholi[n-1] * Math.pow(1 + cagr, 1);
+    document.getElementById('cagr_prognoz').innerHTML = cagrProg.toFixed(1);
+    document.getElementById('cagr_formula').innerHTML = `CAGR = ${(cagr*100).toFixed(2)}%`;
+    
+    // Prognoz grafigi
+    let progYillar = [...yillar, 2026, 2027, 2028, 2029, 2030];
+    let linearValues = [...aholi];
+    for(let i = n; i < n+5; i++) {
+        linearValues.push(intercept + slope * i);
     }
-  }
-
-  saveResult(userName, score);
-
-  document.getElementById("greeting").innerText = "Salom " + userName;
-  document.getElementById("score").innerText = "Ball: " + score + "/5";
-
-  document.getElementById("recommendation").innerHTML = smartRecommendation(score);
-
-  showRecommendations();
-
-  document.getElementById("test-section").style.display = "none";
-  document.getElementById("result-section").style.display = "block";
-
-  if (score <= 2) difficulty = "easy";
-  else if (score <= 4) difficulty = "medium";
-  else difficulty = "hard";
+    
+    if(prognozChart) prognozChart.destroy();
+    const ctx = document.getElementById('prognozChart').getContext('2d');
+    prognozChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: progYillar,
+            datasets: [
+                { label: 'Haqiqiy ma\'lumotlar', data: [...aholi, ...Array(5).fill(null)], borderColor: '#1a73e8', borderWidth: 3, pointRadius: 5, tension: 0.3 },
+                { label: 'Chiziqli trend prognozi', data: linearValues, borderColor: '#ff6d00', borderWidth: 2, borderDash: [5, 5], fill: false }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.raw?.toFixed(1)} ming kishi`
+                    }
+                }
+            }
+        }
+    });
 }
 
-// ==================== NEXT TOPIC ====================
-function nextTopic() {
-  let weak = getWeakTopics();
-  if (weak.length > 0) return "Keyingi: " + weak[0];
-  return "Murakkab masalalarga o‘ting 🔥";
+// ============================================
+// BOSHLASH
+// ============================================
+function init() {
+    calculateAll();
+    updateStatCards();
+    updateTable();
+    renderProblems();
+    renderGraphButtons();
+    updateGraph(graphs[0]);
+    calculatePrognoz();
 }
 
-// ==================== AI (oddiy fallback) ====================
-function askAI() {
-  let question = prompt("Savolingni yoz:");
-
-  if (!question) return;
-
-  if (question.includes("sin 30")) {
-    alert("sin 30 = 0.5");
-  } else {
-    alert("Hozircha AI backend ulanmagan");
-  }
-}
-
-// ==================== RESTART ====================
-function restartTest() {
-  location.reload();
-}
-
-// ==================== LESSON ====================
-function openLesson(topic) {
-  localStorage.setItem("topic", topic);
-  window.location.href = "lesson.html";
-}
-
-// ==================== SMART RECOMMEND ====================
-function smartRecommendation(score) {
-  if (score <= 2) return "Boshlang‘ich darajadan qayta o‘rganing";
-  if (score <= 4) return "Ko‘proq mashq qiling";
-  return "Murakkab darajaga o‘ting 🔥";
-}
+init();
