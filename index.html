@@ -3,117 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ijtimoiy Statistika | Diplom loyihasi</title>
+    <title>Ijtimoiy Statistika | Viloyatlar tahlili</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
         <!-- HEADER -->
         <div class="header">
-            <h1>📊 IJTIMOIY MASALALARNI YECHISHDA</h1>
-            <h2>STATISTIK HISOBLASH ALGORITMLARI</h2>
-            <p>O'zbekiston Respublikasi 2020-2025 yillar ijtimoiy-iqtisodiy ko'rsatkichlari tahlili</p>
-            <button class="btn-github" onclick="window.location.href='https://github.com/mranslonbe22-create'">🌐 GitHub Profil</button>
-        </div>
-
-        <!-- 4 TA ASOSIY KO'RSATKICH -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-value" id="current_aholi">-</div>
-                <div class="stat-label">Aholi soni (ming kishi)</div>
-                <div class="stat-change" id="aholi_change">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">💼</div>
-                <div class="stat-value" id="current_bandlik">-</div>
-                <div class="stat-label">Bandlik darajasi (%)</div>
-                <div class="stat-change" id="bandlik_change">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📉</div>
-                <div class="stat-value" id="current_kambagal">-</div>
-                <div class="stat-label">Kambag'allik darajasi (%)</div>
-                <div class="stat-change" id="kambagal_change">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🏭</div>
-                <div class="stat-value" id="current_ishsiz">-</div>
-                <div class="stat-label">Ishsizlar soni (ming kishi)</div>
-                <div class="stat-change" id="ishsiz_change">-</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <h1>📊 IJTIMOIY MASALALARNI YECHISHDA</h1>
+                    <h2>STATISTIK HISOBLASH ALGORITMLARI</h2>
+                    <p>O'zbekiston Respublikasi 2020-2025 yillar ijtimoiy-iqtisodiy ko'rsatkichlari</p>
+                </div>
+                <div class="header-buttons">
+                    <button class="btn-dark" id="darkModeBtn">🌙 Dark mode</button>
+                </div>
             </div>
         </div>
 
-        <!-- 10 TA IJTIMOIY MASALA -->
-        <div class="section-title">
-            <h2>📋 10 TA IJTIMOIY MASALA VA ULARNING STATISTIK YECHIMLARI</h2>
-            <div class="title-line"></div>
+        <!-- ASOSIY YO'NALISHLAR (TABLAR) -->
+        <div class="main-tabs">
+            <button class="tab-btn active" onclick="showTab('main')">🇺🇿 Umumiy statistika</button>
+            <button class="tab-btn" onclick="showTab('regions')">🗺️ Viloyatlar tahlili (14 ta)</button>
+            <button class="tab-btn" onclick="showTab('compare')">⚖️ Viloyatlar solishtirish</button>
+            <button class="tab-btn" onclick="showTab('manage')">📝 Ma'lumotlarni boshqarish</button>
         </div>
-        <div class="problem-grid" id="problemsGrid"></div>
 
-        <!-- GRAFIKLAR BO'LIMI -->
-        <div class="graph-section">
-            <div class="graph-title">
-                <span>📈</span> IJTIMOIY KO'RSATKICHLAR DINAMIKASI (2020-2025)
+        <!-- ========== 1. UMUMIY STATISTIKA ========== -->
+        <div id="mainTab" class="tab-content active">
+            <!-- 4 TA ASOSIY KO'RSATKICH -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="current_aholi">-</div><div class="stat-label">Aholi soni (ming kishi)</div><div class="stat-change" id="aholi_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value" id="current_bandlik">-</div><div class="stat-label">Bandlik darajasi (%)</div><div class="stat-change" id="bandlik_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value" id="current_kambagal">-</div><div class="stat-label">Kambag'allik darajasi (%)</div><div class="stat-change" id="kambagal_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">🏭</div><div class="stat-value" id="current_ishsiz">-</div><div class="stat-label">Ishsizlar soni (ming kishi)</div><div class="stat-change" id="ishsiz_change">-</div></div>
             </div>
-            <div class="graph-buttons" id="graphButtons"></div>
-            <div class="chart-container">
+
+            <!-- 10 TA IJTIMOIY MASALA -->
+            <div class="section-title"><h2>📋 10 TA IJTIMOIY MASALA</h2><div class="title-line"></div></div>
+            <div class="problem-grid" id="problemsGrid"></div>
+
+            <!-- GRAFIKLAR -->
+            <div class="graph-section">
+                <div class="graph-title">📈 IJTIMOIY KO'RSATKICHLAR DINAMIKASI</div>
+                <div class="graph-buttons" id="graphButtons"></div>
                 <canvas id="mainChart"></canvas>
             </div>
-        </div>
 
-        <!-- PROGNOZ BO'LIMI -->
-        <div class="prognoz-section">
-            <div class="section-title">
-                <h2>🔮 2026-2030 YILLAR PROGNOZI</h2>
-                <div class="title-line"></div>
-            </div>
-            <div class="prognoz-grid">
-                <div class="prognoz-card">
-                    <h3>📈 Chiziqli trend</h3>
-                    <div class="prognoz-value" id="linear_prognoz">-</div>
-                    <p>ming kishi (2026)</p>
-                    <div class="prognoz-formula" id="linear_formula">y = a + b·t</div>
+            <!-- PROGNOZ -->
+            <div class="prognoz-section">
+                <div class="section-title"><h2>🔮 2026-2030 PROGNOZ</h2><div class="title-line"></div></div>
+                <div class="prognoz-grid">
+                    <div class="prognoz-card"><h3>📈 Chiziqli trend</h3><div class="prognoz-value" id="linear_prognoz">-</div><p>ming kishi (2026)</p></div>
+                    <div class="prognoz-card"><h3>📊 O'rtacha o'sish</h3><div class="prognoz-value" id="cagr_prognoz">-</div><p>ming kishi (2026)</p></div>
+                    <div class="prognoz-card"><h3>🎯 2030 yil</h3><div class="prognoz-value" id="prognoz_2030">-</div><p>ming kishi</p></div>
                 </div>
-                <div class="prognoz-card">
-                    <h3>📊 O'rtacha yillik o'sish</h3>
-                    <div class="prognoz-value" id="cagr_prognoz">-</div>
-                    <p>ming kishi (2026)</p>
-                    <div class="prognoz-formula" id="cagr_formula">CAGR</div>
-                </div>
-                <div class="prognoz-card">
-                    <h3>🎯 2030 yil prognozi</h3>
-                    <div class="prognoz-value" id="prognoz_2030">-</div>
-                    <p>ming kishi</p>
-                    <div class="prognoz-formula">Chiziqli trend asosida</div>
-                </div>
-            </div>
-            <div class="chart-container">
                 <canvas id="prognozChart"></canvas>
             </div>
-        </div>
 
-        <!-- JADVAL BO'LIMI -->
-        <div class="table-section">
-            <div class="section-title">
-                <h2>📊 MA'LUMOTLAR JADVALI</h2>
-                <div class="title-line"></div>
-            </div>
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr><th>Yil</th><th>Aholi (ming)</th><th>Bandlar (ming)</th><th>MLYa (ming)</th><th>Kambag'al (ming)</th><th>Bandlik %</th><th>Kambag'allik %</th><th>Ishsizlar (ming)</th></tr>
-                    </thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
+            <!-- JADVAL -->
+            <div class="table-section">
+                <h3>📊 MA'LUMOTLAR JADVALI</h3>
+                <input type="text" id="searchInput" placeholder="🔎 Qidirish..." class="search-input" style="margin-bottom:15px; width:100%;">
+                <div class="table-container"><table id="dataTable"><thead><tr><th>Yil</th><th>Aholi</th><th>Bandlik%</th><th>Kambag'allik%</th></tr></thead><tbody id="tableBody"></tbody></table></div>
             </div>
         </div>
 
-        <!-- FOOTER -->
+        <!-- ========== 2. VILOYATLAR TAHLILI ========== -->
+        <div id="regionsTab" class="tab-content">
+            <div class="section-title"><h2>🗺️ O'ZBEKISTON VILOYATLARI STATISTIKASI (14 TA)</h2><div class="title-line"></div></div>
+            
+            <div class="region-search">
+                <input type="text" id="regionSearch" placeholder="🔎 Viloyat nomi bo'yicha qidirish..." class="search-input">
+                <select id="regionYearSelect" class="region-year-select">
+                    <option value="2020">2020-yil</option><option value="2021">2021-yil</option><option value="2022">2022-yil</option>
+                    <option value="2023">2023-yil</option><option value="2024">2024-yil</option><option value="2025" selected>2025-yil</option>
+                </select>
+            </div>
+
+            <div class="regions-grid" id="regionsGrid"></div>
+
+            <div class="graph-section">
+                <div class="graph-title">📊 VILOYATLAR REYTINGI (2025)</div>
+                <canvas id="regionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ========== 3. VILOYATLAR SOLISHTIRISH ========== -->
+        <div id="compareTab" class="tab-content">
+            <div class="section-title"><h2>⚖️ VILOYATLARNI SOLISHTIRISH</h2><div class="title-line"></div></div>
+            
+            <div class="compare-regions">
+                <div class="compare-box">
+                    <h3>📌 1-VILOYAT</h3>
+                    <select id="compareRegion1" class="compare-region-select"></select>
+                    <select id="compareYear1" class="compare-year-select"></select>
+                    <div id="compareData1" class="compare-data-box"></div>
+                </div>
+                <div class="compare-vs">VS</div>
+                <div class="compare-box">
+                    <h3>📌 2-VILOYAT</h3>
+                    <select id="compareRegion2" class="compare-region-select"></select>
+                    <select id="compareYear2" class="compare-year-select"></select>
+                    <div id="compareData2" class="compare-data-box"></div>
+                </div>
+            </div>
+            <canvas id="compareChart" style="margin-top:30px; max-height:300px;"></canvas>
+        </div>
+
+        <!-- ========== 4. MA'LUMOTLARNI BOSHQARISH ========== -->
+        <div id="manageTab" class="tab-content">
+            <div class="section-title"><h2>📝 MA'LUMOTLARNI BOSHQARISH</h2><div class="title-line"></div></div>
+            
+            <div class="manage-grid">
+                <div class="manage-card">
+                    <h3>➕ Yangi viloyat qo'shish</h3>
+                    <input type="text" id="newRegionName" placeholder="Viloyat nomi" class="manage-input">
+                    <input type="number" id="newRegionAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newRegionBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newRegionKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <input type="number" id="newRegionYear" placeholder="Yil" value="2025" class="manage-input">
+                    <button class="btn-primary" id="addRegionBtn">✅ Qo'shish</button>
+                </div>
+
+                <div class="manage-card">
+                    <h3>📅 Yangi yil qo'shish (viloyatga)</h3>
+                    <select id="selectRegionForYear" class="manage-select"></select>
+                    <input type="number" id="newYearForRegion" placeholder="Yil" value="2026" class="manage-input">
+                    <input type="number" id="newYearAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newYearBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newYearKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <button class="btn-primary" id="addYearToRegionBtn">✅ Yil qo'shish</button>
+                </div>
+
+                <div class="manage-card">
+                    <h3>💾 Ma'lumotlarni saqlash</h3>
+                    <button class="btn-secondary" id="saveDataBtn">💾 Saqlash (localStorage)</button>
+                    <button class="btn-secondary" id="loadDataBtn">📂 Yuklash</button>
+                    <button class="btn-secondary" id="resetDataBtn">🔄 Standart holat</button>
+                    <button class="btn-secondary" id="exportRegionsExcel">📎 Excel yuklash</button>
+                </div>
+            </div>
+
+            <div class="table-section" style="margin-top:30px;">
+                <h3>📋 BARCHA VILOYATLAR MA'LUMOTLARI</h3>
+                <div class="table-container">
+                    <table id="allRegionsTable">
+                        <thead><tr><th>Viloyat</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+                        <tbody id="allRegionsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
-            <p>© 2025 Ijtimoiy statistika | Diplom loyihasi | Barcha ma'lumotlar statistik qo'mita asosida</p>
-            <p>📧 Email: diplom@statistika.uz | 🌐 GitHub: @mranslonbe22-create</p>
+            <p>© 2025 Ijtimoiy statistika | Diplom loyihasi | 14 viloyat | localStorage saqlash</p>
         </div>
     </div>
 
