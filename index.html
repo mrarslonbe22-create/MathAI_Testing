@@ -1,69 +1,122 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MathAI – Mustaqil Ta'lim</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ijtimoiy Statistika | Diplom loyihasi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📊 IJTIMOIY MASALALARNI YECHISHDA</h1>
+            <h2>STATISTIK HISOBLASH ALGORITMLARI</h2>
+            <p>O'zbekiston Respublikasi 2020-2025 yillar ijtimoiy-iqtisodiy ko'rsatkichlari tahlili</p>
+            <button class="btn-github" onclick="window.location.href='https://github.com/mranslonbe22-create'">🌐 GitHub Profil</button>
+        </div>
 
-<!-- BOSHLANG'ICH BO'LIM -->
-<div class="container" id="start-section">
-  <h1>MathAI – Mustaqil Ta'lim</h1>
+        <!-- 4 TA ASOSIY KO'RSATKICH -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="current_aholi">-</div>
+                <div class="stat-label">Aholi soni (ming kishi)</div>
+                <div class="stat-change" id="aholi_change">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💼</div>
+                <div class="stat-value" id="current_bandlik">-</div>
+                <div class="stat-label">Bandlik darajasi (%)</div>
+                <div class="stat-change" id="bandlik_change">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📉</div>
+                <div class="stat-value" id="current_kambagal">-</div>
+                <div class="stat-label">Kambag'allik darajasi (%)</div>
+                <div class="stat-change" id="kambagal_change">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏭</div>
+                <div class="stat-value" id="current_ishsiz">-</div>
+                <div class="stat-label">Ishsizlar soni (ming kishi)</div>
+                <div class="stat-change" id="ishsiz_change">-</div>
+            </div>
+        </div>
 
-  <input type="text" id="firstName" placeholder="Ismingiz"><br>
-  <input type="text" id="lastName" placeholder="Familiyangiz"><br>
+        <!-- 10 TA IJTIMOIY MASALA -->
+        <div class="section-title">
+            <h2>📋 10 TA IJTIMOIY MASALA VA ULARNING STATISTIK YECHIMLARI</h2>
+            <div class="title-line"></div>
+        </div>
+        <div class="problem-grid" id="problemsGrid"></div>
 
-  <!-- Test boshlash tugmasi -->
-  <button onclick="startTest()">Testni boshlash</button><br><br>
+        <!-- GRAFIKLAR BO'LIMI -->
+        <div class="graph-section">
+            <div class="graph-title">
+                <span>📈</span> IJTIMOIY KO'RSATKICHLAR DINAMIKASI (2020-2025)
+            </div>
+            <div class="graph-buttons" id="graphButtons"></div>
+            <div class="chart-container">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
 
-  <!-- Admin knopka -->
-  <button onclick="openAdmin()">Admin</button>
+        <!-- PROGNOZ BO'LIMI -->
+        <div class="prognoz-section">
+            <div class="section-title">
+                <h2>🔮 2026-2030 YILLAR PROGNOZI</h2>
+                <div class="title-line"></div>
+            </div>
+            <div class="prognoz-grid">
+                <div class="prognoz-card">
+                    <h3>📈 Chiziqli trend</h3>
+                    <div class="prognoz-value" id="linear_prognoz">-</div>
+                    <p>ming kishi (2026)</p>
+                    <div class="prognoz-formula" id="linear_formula">y = a + b·t</div>
+                </div>
+                <div class="prognoz-card">
+                    <h3>📊 O'rtacha yillik o'sish</h3>
+                    <div class="prognoz-value" id="cagr_prognoz">-</div>
+                    <p>ming kishi (2026)</p>
+                    <div class="prognoz-formula" id="cagr_formula">CAGR</div>
+                </div>
+                <div class="prognoz-card">
+                    <h3>🎯 2030 yil prognozi</h3>
+                    <div class="prognoz-value" id="prognoz_2030">-</div>
+                    <p>ming kishi</p>
+                    <div class="prognoz-formula">Chiziqli trend asosida</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="prognozChart"></canvas>
+            </div>
+        </div>
 
-  <!-- Admin parol input (dastlab yashirin) -->
-  <div id="adminLogin" style="display:none; margin-top:10px;">
-    <input type="password" id="adminPassword" placeholder="Admin parolni kiriting">
-    <button onclick="checkAdmin()">Kirish</button>
-  </div>
-</div>
+        <!-- JADVAL BO'LIMI -->
+        <div class="table-section">
+            <div class="section-title">
+                <h2>📊 MA'LUMOTLAR JADVALI</h2>
+                <div class="title-line"></div>
+            </div>
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr><th>Yil</th><th>Aholi (ming)</th><th>Bandlar (ming)</th><th>MLYa (ming)</th><th>Kambag'al (ming)</th><th>Bandlik %</th><th>Kambag'allik %</th><th>Ishsizlar (ming)</th></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
 
-<!-- TEST SEKSYASI -->
-<div class="container" id="test-section" style="display:none;">
-  <h2 id="timer">⏱️ 150</h2>
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>© 2025 Ijtimoiy statistika | Diplom loyihasi | Barcha ma'lumotlar statistik qo'mita asosida</p>
+            <p>📧 Email: diplom@statistika.uz | 🌐 GitHub: @mranslonbe22-create</p>
+        </div>
+    </div>
 
-  <div>
-    <label>1. <span></span></label>
-    <input type="number" id="q1"><br>
-
-    <label>2. <span></span></label>
-    <input type="number" id="q2"><br>
-
-    <label>3. <span></span></label>
-    <input type="number" id="q3"><br>
-
-    <label>4. <span></span></label>
-    <input type="number" id="q4"><br>
-
-    <label>5. <span></span></label>
-    <input type="number" id="q5"><br>
-  </div>
-
-  <button onclick="checkTest()">Tugallash</button>
-</div>
-
-<!-- NATIJA SEKSYASI -->
-<div class="container result-card" id="result-section" style="display:none;">
-  <h2 id="greeting"></h2>
-  <p id="score"></p>
-  <div id="recommendation"></div>
-  <p id="nextTopicBtn"></p>
-  <button onclick="askAI()">🤖 AI yordam</button>
-  <button onclick="restartTest()">Qayta boshlash</button>
-</div>
-
-<!-- JS fayl sahifa oxirida -->
-<script src="script.js" defer></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
