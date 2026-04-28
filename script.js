@@ -194,28 +194,35 @@ function calculatePrognoz() {
     let prog2026 = intercept + slope * n;
     let prog2030 = intercept + slope * (n + 4);
     
-    document.getElementById('linear_prognoz').innerHTML = prog2026.toFixed(1);
-    document.getElementById('prognoz_2030').innerHTML = prog2030.toFixed(1);
+    let linearElem = document.getElementById('linear_prognoz');
+    let prog2030Elem = document.getElementById('prognoz_2030');
+    let cagrElem = document.getElementById('cagr_prognoz');
+    
+    if(linearElem) linearElem.innerHTML = prog2026.toFixed(1);
+    if(prog2030Elem) prog2030Elem.innerHTML = prog2030.toFixed(1);
     
     let cagr = Math.pow(aholi[n-1] / aholi[0], 1/(n-1)) - 1;
-    document.getElementById('cagr_prognoz').innerHTML = (aholi[n-1] * (1 + cagr)).toFixed(1);
+    if(cagrElem) cagrElem.innerHTML = (aholi[n-1] * (1 + cagr)).toFixed(1);
     
     if(prognozChart) prognozChart.destroy();
     let progYillar = [...yillar, 2026, 2027, 2028, 2029, 2030];
     let linearValues = [...aholi];
     for(let i = n; i < n+5; i++) linearValues.push(intercept + slope * i);
     
-    prognozChart = new Chart(document.getElementById('prognozChart'), {
-        type: 'line',
-        data: {
-            labels: progYillar,
-            datasets: [
-                { label: 'Haqiqiy', data: [...aholi, ...Array(5).fill(null)], borderColor: '#1a73e8', borderWidth: 3 },
-                { label: 'Trend', data: linearValues, borderColor: '#ff6d00', borderDash: [5,5], fill: false }
-            ]
-        },
-        options: { responsive: true }
-    });
+    let progCtx = document.getElementById('prognozChart');
+    if(progCtx) {
+        prognozChart = new Chart(progCtx, {
+            type: 'line',
+            data: {
+                labels: progYillar,
+                datasets: [
+                    { label: 'Haqiqiy', data: [...aholi, ...Array(5).fill(null)], borderColor: '#1a73e8', borderWidth: 3 },
+                    { label: 'Trend', data: linearValues, borderColor: '#ff6d00', borderDash: [5,5], fill: false }
+                ]
+            },
+            options: { responsive: true }
+        });
+    }
 }
 
 // ============================================
@@ -296,13 +303,16 @@ function renderCompare() {
     let y1 = document.getElementById('compareYear1')?.value;
     let y2 = document.getElementById('compareYear2')?.value;
     
-    if(r1 && regionsData[r1] && y1) {
+    let data1Div = document.getElementById('compareData1');
+    let data2Div = document.getElementById('compareData2');
+    
+    if(r1 && regionsData[r1] && y1 && data1Div) {
         let d = regionsData[r1];
-        document.getElementById('compareData1').innerHTML = `<strong>${r1}</strong><br>👥 Aholi: ${d.aholi[y1] || '-'} ming<br>💼 Bandlik: ${d.bandlik[y1] || '-'}%<br>📉 Kambag'allik: ${d.kambagallik[y1] || '-'}%<br>📍 Yil: ${y1}`;
+        data1Div.innerHTML = `<strong>${r1}</strong><br>👥 Aholi: ${d.aholi[y1] || '-'} ming<br>💼 Bandlik: ${d.bandlik[y1] || '-'}%<br>📉 Kambag'allik: ${d.kambagallik[y1] || '-'}%<br>📍 Yil: ${y1}`;
     }
-    if(r2 && regionsData[r2] && y2) {
+    if(r2 && regionsData[r2] && y2 && data2Div) {
         let d = regionsData[r2];
-        document.getElementById('compareData2').innerHTML = `<strong>${r2}</strong><br>👥 Aholi: ${d.aholi[y2] || '-'} ming<br>💼 Bandlik: ${d.bandlik[y2] || '-'}%<br>📉 Kambag'allik: ${d.kambagallik[y2] || '-'}%<br>📍 Yil: ${y2}`;
+        data2Div.innerHTML = `<strong>${r2}</strong><br>👥 Aholi: ${d.aholi[y2] || '-'} ming<br>💼 Bandlik: ${d.bandlik[y2] || '-'}%<br>📉 Kambag'allik: ${d.kambagallik[y2] || '-'}%<br>📍 Yil: ${y2}`;
     }
     drawCompareChart(r1, r2, y1, y2);
 }
@@ -345,7 +355,7 @@ function renderAllRegionsTable() {
         for(let y of [2020,2021,2022,2023,2024,2025]) {
             cells += `<td>${d.aholi[y] || '-'} ming<br>${d.bandlik[y] || '-'}%<br>${d.kambagallik[y] || '-'}%</td>`;
         }
-        tbody.innerHTML += `<td><td><strong>${region}</strong></td>${cells}</tr>`;
+        tbody.innerHTML += `<tr><td><strong>${region}</strong></td>${cells}</tr>`;
     }
 }
 
@@ -393,7 +403,6 @@ function refreshAll() {
 // ============================================
 // FIKR-MULOHAZALAR FUNKSIYALARI
 // ============================================
-
 function loadFeedback() {
     let saved = localStorage.getItem('diplom_feedbacks');
     if(saved) {
@@ -456,4 +465,166 @@ function escapeHtml(text) {
 
 function addFeedback() {
     let nameInput = document.getElementById('feedbackName');
-    let ratingSelect = document.getElementById('feedback
+    let ratingSelect = document.getElementById('feedbackRating');
+    let textInput = document.getElementById('feedbackText');
+    
+    let name = nameInput ? nameInput.value.trim() : '';
+    let rating = ratingSelect ? parseInt(ratingSelect.value) : 5;
+    let text = textInput ? textInput.value.trim() : '';
+    
+    if(!name) {
+        alert('❌ Iltimos, ismingizni kiriting!');
+        return;
+    }
+    if(!text) {
+        alert('❌ Iltimos, fikringizni yozing!');
+        return;
+    }
+    
+    let newFeedback = {
+        name: name,
+        rating: rating,
+        text: text,
+        date: new Date().toLocaleString()
+    };
+    
+    feedbacks.unshift(newFeedback);
+    saveFeedback();
+    renderFeedback();
+    
+    if(nameInput) nameInput.value = '';
+    if(textInput) textInput.value = '';
+    if(ratingSelect) ratingSelect.value = '5';
+    
+    alert('✅ Fikringiz uchun rahmat!');
+}
+
+function deleteFeedback(index) {
+    if(confirm('⚠️ Bu fikrni o\'chirmoqchimisiz?')) {
+        feedbacks.splice(index, 1);
+        saveFeedback();
+        renderFeedback();
+    }
+}
+
+function clearAllFeedback() {
+    if(confirm('⚠️ Barcha fikrlar butunlay o\'chiriladi! Davom etasizmi?')) {
+        feedbacks = [];
+        saveFeedback();
+        renderFeedback();
+        alert('✅ Barcha fikrlar tozalandi!');
+    }
+}
+
+function saveFeedback() {
+    localStorage.setItem('diplom_feedbacks', JSON.stringify(feedbacks));
+}
+
+// ============================================
+// EVENT LISTENERS
+// ============================================
+document.getElementById('darkModeBtn')?.addEventListener('click', function() {
+    document.body.classList.toggle('dark-mode');
+    this.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Light mode' : '🌙 Dark mode';
+});
+
+document.getElementById('searchInput')?.addEventListener('keyup', function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#tableBody tr');
+    for(let i = 0; i < rows.length; i++) {
+        rows[i].style.display = rows[i].innerText.toLowerCase().includes(filter) ? '' : 'none';
+    }
+});
+
+document.getElementById('addRegionBtn')?.addEventListener('click', function() {
+    let name = document.getElementById('newRegionName')?.value.trim();
+    let a = parseFloat(document.getElementById('newRegionAholi')?.value);
+    let b = parseFloat(document.getElementById('newRegionBandlik')?.value);
+    let k = parseFloat(document.getElementById('newRegionKambagal')?.value);
+    let y = document.getElementById('newRegionYear')?.value;
+    if(name && a && b && k && y) {
+        if(regionsData[name]) { alert('❌ Bu viloyat mavjud!'); return; }
+        regionsData[name] = { aholi: {}, bandlik: {}, kambagallik: {} };
+        regionsData[name].aholi[y] = a;
+        regionsData[name].bandlik[y] = b;
+        regionsData[name].kambagallik[y] = k;
+        alert(`✅ ${name} qo'shildi!`);
+        refreshAll();
+    } else { alert('❌ Barcha maydonlarni to\'ldiring!'); }
+});
+
+document.getElementById('addYearToRegionBtn')?.addEventListener('click', function() {
+    let region = document.getElementById('selectRegionForYear')?.value;
+    let year = document.getElementById('newYearForRegion')?.value;
+    let a = parseFloat(document.getElementById('newYearAholi')?.value);
+    let b = parseFloat(document.getElementById('newYearBandlik')?.value);
+    let k = parseFloat(document.getElementById('newYearKambagal')?.value);
+    if(region && year && a && b && k) {
+        if(!regionsData[region]) { alert('❌ Viloyat topilmadi!'); return; }
+        regionsData[region].aholi[year] = a;
+        regionsData[region].bandlik[year] = b;
+        regionsData[region].kambagallik[year] = k;
+        alert(`✅ ${region} ga ${year}-yil qo'shildi!`);
+        refreshAll();
+    } else { alert('❌ Barcha maydonlarni to\'ldiring!'); }
+});
+
+document.getElementById('saveDataBtn')?.addEventListener('click', saveToLocalStorage);
+document.getElementById('loadDataBtn')?.addEventListener('click', loadFromLocalStorage);
+document.getElementById('resetDataBtn')?.addEventListener('click', resetToDefault);
+
+document.getElementById('exportRegionsExcel')?.addEventListener('click', function() {
+    let data = [['Viloyat', '2020 aholi', '2020 bandlik%', '2020 kambagallik%', '2025 aholi', '2025 bandlik%', '2025 kambagallik%']];
+    let regions = Object.keys(regionsData);
+    for(let i = 0; i < regions.length; i++) {
+        let d = regionsData[regions[i]];
+        data.push([regions[i], d.aholi[2020] || '-', d.bandlik[2020] || '-', d.kambagallik[2020] || '-', d.aholi[2025] || '-', d.bandlik[2025] || '-', d.kambagallik[2025] || '-']);
+    }
+    let ws = XLSX.utils.aoa_to_sheet(data);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Viloyatlar');
+    XLSX.writeFile(wb, `viloyatlar_${new Date().toISOString().slice(0,19)}.xlsx`);
+    alert('✅ Excel yuklandi!');
+});
+
+document.getElementById('regionSearch')?.addEventListener('keyup', () => renderRegions());
+document.getElementById('regionYearSelect')?.addEventListener('change', () => renderRegions());
+
+document.getElementById('compareRegion1')?.addEventListener('change', renderCompare);
+document.getElementById('compareRegion2')?.addEventListener('change', renderCompare);
+document.getElementById('compareYear1')?.addEventListener('change', renderCompare);
+document.getElementById('compareYear2')?.addEventListener('change', renderCompare);
+
+// ============================================
+// TAB FUNKSIYASI
+// ============================================
+function showTab(tabName) {
+    let tabs = document.querySelectorAll('.tab-content');
+    for(let i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    let activeTab = document.getElementById(tabName + 'Tab');
+    if(activeTab) activeTab.classList.add('active');
+    
+    let btns = document.querySelectorAll('.tab-btn');
+    for(let i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    if(event && event.target) event.target.classList.add('active');
+    
+    if(tabName === 'regions') renderRegions();
+    if(tabName === 'compare') { updateRegionSelects(); renderCompare(); }
+    if(tabName === 'manage') { updateRegionSelectForYear(); renderAllRegionsTable(); }
+}
+
+// ============================================
+// BOSHLASH
+// ============================================
+calculateAll();
+updateStatCards();
+updateTable();
+renderProblems();
+renderGraphButtons();
+updateGraph(0);
+calculatePrognoz();
+renderRegions();
+updateRegionSelects();
+renderAllRegionsTable();
+updateRegionSelectForYear();
+loadFeedback();
