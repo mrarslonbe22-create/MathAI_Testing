@@ -283,3 +283,191 @@ body.dark-mode .tab-btn.active { color: white; }
     .compare-regions { grid-template-columns: 1fr; }
     .compare-vs { text-align: center; padding: 10px; }
 }
+/* ========== FIKR-MULOHAZALAR BO'LIMI ========== */
+.feedback-section {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.feedback-container {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+}
+
+.feedback-form {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.feedback-form h3 {
+    color: #1e3c72;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.feedback-input, .feedback-select, .feedback-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: inherit;
+    transition: 0.3s;
+}
+
+.feedback-input:focus, .feedback-select:focus, .feedback-textarea:focus {
+    outline: none;
+    border-color: #2a5298;
+}
+
+.feedback-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.feedback-btn {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.feedback-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.feedback-list {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.feedback-list h3 {
+    color: #1e3c72;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.feedback-items {
+    margin-bottom: 20px;
+}
+
+.feedback-item {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 4px solid #2a5298;
+}
+
+.feedback-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.feedback-name {
+    font-weight: bold;
+    color: #1e3c72;
+}
+
+.feedback-rating {
+    font-size: 14px;
+}
+
+.feedback-rating.good { color: #28a745; }
+.feedback-rating.mid { color: #fd7e14; }
+.feedback-rating.bad { color: #dc3545; }
+
+.feedback-date {
+    font-size: 11px;
+    color: #999;
+    margin-left: 10px;
+}
+
+.feedback-text {
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.feedback-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.3s;
+}
+
+.feedback-delete:hover {
+    background: #c82333;
+}
+
+.empty-feedback {
+    text-align: center;
+    color: #999;
+    padding: 40px 20px;
+}
+
+.clear-feedback-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.clear-feedback-btn:hover {
+    background: #5a6268;
+}
+
+/* Dark mode qo'shimchasi */
+body.dark-mode .feedback-section,
+body.dark-mode .feedback-form,
+body.dark-mode .feedback-list {
+    background: #2a2a3e;
+}
+
+body.dark-mode .feedback-item {
+    background: #1e1e2e;
+}
+
+body.dark-mode .feedback-text {
+    color: #ccc;
+}
+
+body.dark-mode .feedback-input,
+body.dark-mode .feedback-select,
+body.dark-mode .feedback-textarea {
+    background: #1e1e2e;
+    border-color: #444;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .feedback-container {
+        grid-template-columns: 1fr;
+    }
+}
