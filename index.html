@@ -3,333 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ijtimoiy Statistika | Diplom loyihasi</title>
+    <title>Ijtimoiy Statistika | Viloyatlar tahlili</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-        }
-        .container { max-width: 1300px; margin: 0 auto; }
-        
-        .header {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 { font-size: 24px; margin-bottom: 10px; }
-        .header p { font-size: 14px; opacity: 0.9; }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .stat-value { font-size: 32px; font-weight: bold; color: #1e3c72; margin: 10px 0; }
-        .stat-label { color: #666; font-size: 13px; }
-        .stat-change { font-size: 12px; margin-top: 5px; }
-        .positive { color: #28a745; }
-        .negative { color: #dc3545; }
-        
-        .section-title { text-align: center; margin: 30px 0 20px; }
-        .section-title h2 { font-size: 22px; color: white; }
-        .title-line { width: 60px; height: 3px; background: white; margin: 10px auto; border-radius: 2px; }
-        
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .problem-card {
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            border-left: 4px solid #2a5298;
-        }
-        .problem-card h3 { color: #1e3c72; font-size: 16px; margin-bottom: 8px; }
-        .formula { background: #f0f2f5; padding: 8px; border-radius: 8px; font-size: 11px; margin: 8px 0; }
-        .result { font-size: 22px; font-weight: bold; color: #2a5298; text-align: center; }
-        .trend-up { color: #28a745; text-align: center; font-size: 12px; }
-        .trend-down { color: #dc3545; text-align: center; font-size: 12px; }
-        .solution { font-size: 11px; color: #555; border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px; }
-        
-        .graph-section, .prognoz-section {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .graph-title { font-size: 18px; font-weight: bold; color: #1e3c72; margin-bottom: 15px; }
-        .graph-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .graph-btn { background: #e0e0e0; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; }
-        .graph-btn.active { background: #2a5298; color: white; }
-        canvas { max-height: 350px; width: 100%; }
-        
-        .prognoz-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .prognoz-card { background: #f8f9fa; border-radius: 12px; padding: 15px; text-align: center; }
-        .prognoz-value { font-size: 28px; font-weight: bold; color: #2a5298; }
-        
-        .table-section {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            overflow-x: auto;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: center; border-bottom: 1px solid #ddd; }
-        th { background: #1e3c72; color: white; }
-        
-        .footer { text-align: center; margin-top: 30px; padding: 15px; color: white; }
-        
-        @media (max-width: 700px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .problem-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
-            <h1>📊 IJTIMOIY MASALALARNI YECHISHDA</h1>
-            <h2 style="font-size: 18px;">STATISTIK HISOBLASH ALGORITMLARI</h2>
-            <p>O'zbekiston Respublikasi 2020-2025 yillar ijtimoiy-iqtisodiy ko'rsatkichlari</p>
-        </div>
-
-        <!-- 4 TA ASOSIY KO'RSATKICH -->
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-value" id="aholiValue">-</div><div class="stat-label">Aholi soni (ming)</div><div class="stat-change" id="aholiChange">-</div></div>
-            <div class="stat-card"><div class="stat-value" id="bandlikValue">-</div><div class="stat-label">Bandlik darajasi (%)</div><div class="stat-change" id="bandlikChange">-</div></div>
-            <div class="stat-card"><div class="stat-value" id="kambagalValue">-</div><div class="stat-label">Kambag'allik darajasi (%)</div><div class="stat-change" id="kambagalChange">-</div></div>
-            <div class="stat-card"><div class="stat-value" id="ishsizValue">-</div><div class="stat-label">Ishsizlar soni (ming)</div><div class="stat-change" id="ishsizChange">-</div></div>
-        </div>
-
-        <!-- 10 TA IJTIMOIY MASALA -->
-        <div class="section-title"><h2>📋 10 TA IJTIMOIY MASALA</h2><div class="title-line"></div></div>
-        <div class="problem-grid" id="problemsGrid"></div>
-
-        <!-- GRAFIKLAR -->
-        <div class="graph-section">
-            <div class="graph-title">📈 IJTIMOIY KO'RSATKICHLAR DINAMIKASI</div>
-            <div class="graph-buttons" id="graphButtons"></div>
-            <canvas id="mainChart"></canvas>
-        </div>
-
-        <!-- PROGNOZ -->
-        <div class="prognoz-section">
-            <div class="graph-title">🔮 2026-2030 PROGNOZ</div>
-            <div class="prognoz-grid">
-                <div class="prognoz-card"><h3>📈 Chiziqli trend</h3><div class="prognoz-value" id="linearPrognoz">-</div><p>2026-yil (ming)</p></div>
-                <div class="prognoz-card"><h3>📊 CAGR</h3><div class="prognoz-value" id="cagrPrognoz">-</div><p>2026-yil (ming)</p></div>
-                <div class="prognoz-card"><h3>🎯 2030 yil</h3><div class="prognoz-value" id="prognoz2030">-</div><p>ming kishi</p></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <h1>📊 IJTIMOIY MASALALARNI YECHISHDA</h1>
+                    <h2>STATISTIK HISOBLASH ALGORITMLARI</h2>
+                    <p>O'zbekiston Respublikasi 2020-2025 yillar ijtimoiy-iqtisodiy ko'rsatkichlari</p>
+                </div>
+                <div class="header-buttons">
+                    <button class="btn-dark" id="darkModeBtn">🌙 Dark mode</button>
+                </div>
             </div>
-            <canvas id="prognozChart" style="max-height: 300px;"></canvas>
         </div>
 
-        <!-- JADVAL -->
-        <div class="table-section">
-            <h3 style="margin-bottom: 15px;">📊 MA'LUMOTLAR JADVALI</h3>
-            <table id="dataTable">
-                <thead><tr><th>Yil</th><th>Aholi (ming)</th><th>Bandlik (%)</th><th>Kambag'allik (%)</th></tr></thead>
-                <tbody id="tableBody"></tbody>
-            </table>
+        <!-- ASOSIY YO'NALISHLAR (TABLAR) -->
+        <div class="main-tabs">
+            <button class="tab-btn active" onclick="showTab('main')">🇺🇿 Umumiy statistika</button>
+            <button class="tab-btn" onclick="showTab('regions')">🗺️ Viloyatlar tahlili (14 ta)</button>
+            <button class="tab-btn" onclick="showTab('compare')">⚖️ Viloyatlar solishtirish</button>
+            <button class="tab-btn" onclick="showTab('manage')">📝 Ma'lumotlarni boshqarish</button>
+        </div>
+
+        <!-- ========== 1. UMUMIY STATISTIKA ========== -->
+        <div id="mainTab" class="tab-content active">
+            <!-- 4 TA ASOSIY KO'RSATKICH -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="current_aholi">-</div><div class="stat-label">Aholi soni (ming kishi)</div><div class="stat-change" id="aholi_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value" id="current_bandlik">-</div><div class="stat-label">Bandlik darajasi (%)</div><div class="stat-change" id="bandlik_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value" id="current_kambagal">-</div><div class="stat-label">Kambag'allik darajasi (%)</div><div class="stat-change" id="kambagal_change">-</div></div>
+                <div class="stat-card"><div class="stat-icon">🏭</div><div class="stat-value" id="current_ishsiz">-</div><div class="stat-label">Ishsizlar soni (ming kishi)</div><div class="stat-change" id="ishsiz_change">-</div></div>
+            </div>
+
+            <!-- 10 TA IJTIMOIY MASALA -->
+            <div class="section-title"><h2>📋 10 TA IJTIMOIY MASALA</h2><div class="title-line"></div></div>
+            <div class="problem-grid" id="problemsGrid"></div>
+
+            <!-- GRAFIKLAR -->
+            <div class="graph-section">
+                <div class="graph-title">📈 IJTIMOIY KO'RSATKICHLAR DINAMIKASI</div>
+                <div class="graph-buttons" id="graphButtons"></div>
+                <canvas id="mainChart"></canvas>
+            </div>
+
+            <!-- PROGNOZ -->
+            <div class="prognoz-section">
+                <div class="section-title"><h2>🔮 2026-2030 PROGNOZ</h2><div class="title-line"></div></div>
+                <div class="prognoz-grid">
+                    <div class="prognoz-card"><h3>📈 Chiziqli trend</h3><div class="prognoz-value" id="linear_prognoz">-</div><p>ming kishi (2026)</p></div>
+                    <div class="prognoz-card"><h3>📊 O'rtacha o'sish</h3><div class="prognoz-value" id="cagr_prognoz">-</div><p>ming kishi (2026)</p></div>
+                    <div class="prognoz-card"><h3>🎯 2030 yil</h3><div class="prognoz-value" id="prognoz_2030">-</div><p>ming kishi</p></div>
+                </div>
+                <canvas id="prognozChart"></canvas>
+            </div>
+
+            <!-- JADVAL -->
+            <div class="table-section">
+                <h3>📊 MA'LUMOTLAR JADVALI</h3>
+                <input type="text" id="searchInput" placeholder="🔎 Qidirish..." class="search-input" style="margin-bottom:15px; width:100%;">
+                <div class="table-container"><table id="dataTable"><thead><tr><th>Yil</th><th>Aholi</th><th>Bandlik%</th><th>Kambag'allik%</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- ========== 2. VILOYATLAR TAHLILI ========== -->
+        <div id="regionsTab" class="tab-content">
+            <div class="section-title"><h2>🗺️ O'ZBEKISTON VILOYATLARI STATISTIKASI (14 TA)</h2><div class="title-line"></div></div>
+            
+            <div class="region-search">
+                <input type="text" id="regionSearch" placeholder="🔎 Viloyat nomi bo'yicha qidirish..." class="search-input">
+                <select id="regionYearSelect" class="region-year-select">
+                    <option value="2020">2020-yil</option><option value="2021">2021-yil</option><option value="2022">2022-yil</option>
+                    <option value="2023">2023-yil</option><option value="2024">2024-yil</option><option value="2025" selected>2025-yil</option>
+                </select>
+            </div>
+
+            <div class="regions-grid" id="regionsGrid"></div>
+
+            <div class="graph-section">
+                <div class="graph-title">📊 VILOYATLAR REYTINGI (2025)</div>
+                <canvas id="regionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ========== 3. VILOYATLAR SOLISHTIRISH ========== -->
+        <div id="compareTab" class="tab-content">
+            <div class="section-title"><h2>⚖️ VILOYATLARNI SOLISHTIRISH</h2><div class="title-line"></div></div>
+            
+            <div class="compare-regions">
+                <div class="compare-box">
+                    <h3>📌 1-VILOYAT</h3>
+                    <select id="compareRegion1" class="compare-region-select"></select>
+                    <select id="compareYear1" class="compare-year-select"></select>
+                    <div id="compareData1" class="compare-data-box"></div>
+                </div>
+                <div class="compare-vs">VS</div>
+                <div class="compare-box">
+                    <h3>📌 2-VILOYAT</h3>
+                    <select id="compareRegion2" class="compare-region-select"></select>
+                    <select id="compareYear2" class="compare-year-select"></select>
+                    <div id="compareData2" class="compare-data-box"></div>
+                </div>
+            </div>
+            <canvas id="compareChart" style="margin-top:30px; max-height:300px;"></canvas>
+        </div>
+        <!-- ========== FIKR-MULOHAZALAR BO'LIMI ========== -->
+        <div class="feedback-section">
+            <div class="section-title">
+                <h2>💬 FIKR-MULOHAZALAR</h2>
+                <div class="title-line"></div>
+            </div>
+            
+            <div class="feedback-container">
+                <!-- Fikr qoldirish formasi -->
+                <div class="feedback-form">
+                    <h3>📝 O'z fikringizni qoldiring</h3>
+                    <input type="text" id="feedbackName" placeholder="Ismingiz" class="feedback-input">
+                    <select id="feedbackRating" class="feedback-select">
+                        <option value="5">⭐⭐⭐⭐⭐ Ajoyib (5)</option>
+                        <option value="4">⭐⭐⭐⭐ Yaxshi (4)</option>
+                        <option value="3">⭐⭐⭐ O'rtacha (3)</option>
+                        <option value="2">⭐⭐ Qoniqarsiz (2)</option>
+                        <option value="1">⭐ Yomon (1)</option>
+                    </select>
+                    <textarea id="feedbackText" rows="4" placeholder="Fikringizni yozing..." class="feedback-textarea"></textarea>
+                    <button class="feedback-btn" onclick="addFeedback()">💬 Fikr qoldirish</button>
+                </div>
+                
+                <!-- Fikrlar ro'yxati -->
+                <div class="feedback-list">
+                    <h3>📋 Jami fikrlar: <span id="feedbackCount">0</span> ta</h3>
+                    <div id="feedbackList" class="feedback-items">
+                        <div class="empty-feedback">Hozircha hech qanday fikr qoldirilmagan. Birinchi bo'lib fikr bildiring!</div>
+                    </div>
+                    <button class="clear-feedback-btn" onclick="clearAllFeedback()">🗑️ Barcha fikrlarni tozalash</button>
+                </div>
+            </div>
+        </div>
+        <!-- ========== 4. MA'LUMOTLARNI BOSHQARISH ========== -->
+        <div id="manageTab" class="tab-content">
+            <div class="section-title"><h2>📝 MA'LUMOTLARNI BOSHQARISH</h2><div class="title-line"></div></div>
+            
+            <div class="manage-grid">
+                <div class="manage-card">
+                    <h3>➕ Yangi viloyat qo'shish</h3>
+                    <input type="text" id="newRegionName" placeholder="Viloyat nomi" class="manage-input">
+                    <input type="number" id="newRegionAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newRegionBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newRegionKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <input type="number" id="newRegionYear" placeholder="Yil" value="2025" class="manage-input">
+                    <button class="btn-primary" id="addRegionBtn">✅ Qo'shish</button>
+                </div>
+
+                <div class="manage-card">
+                    <h3>📅 Yangi yil qo'shish (viloyatga)</h3>
+                    <select id="selectRegionForYear" class="manage-select"></select>
+                    <input type="number" id="newYearForRegion" placeholder="Yil" value="2026" class="manage-input">
+                    <input type="number" id="newYearAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newYearBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newYearKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <button class="btn-primary" id="addYearToRegionBtn">✅ Yil qo'shish</button>
+                </div>
+
+                <div class="manage-card">
+                    <h3>💾 Ma'lumotlarni saqlash</h3>
+                    <button class="btn-secondary" id="saveDataBtn">💾 Saqlash (localStorage)</button>
+                    <button class="btn-secondary" id="loadDataBtn">📂 Yuklash</button>
+                    <button class="btn-secondary" id="resetDataBtn">🔄 Standart holat</button>
+                    <button class="btn-secondary" id="exportRegionsExcel">📎 Excel yuklash</button>
+                </div>
+            </div>
+
+            <div class="table-section" style="margin-top:30px;">
+                <h3>📋 BARCHA VILOYATLAR MA'LUMOTLARI</h3>
+                <div class="table-container">
+                    <table id="allRegionsTable">
+                        <thead><tr><th>Viloyat</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+                        <tbody id="allRegionsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
-            <p>© 2025 Ijtimoiy statistika | Diplom loyihasi | Barcha ma'lumotlar statistik qo'mita asosida</p>
+            <p>© 2025 Ijtimoiy statistika | Diplom loyihasi | 14 viloyat | localStorage saqlash</p>
         </div>
     </div>
 
-    <script>
-        // ========== MA'LUMOTLAR ==========
-        const yillar = [2020, 2021, 2022, 2023, 2024, 2025];
-        const aholi = [34558.9, 35271.3, 35874.4, 36421.8, 37543.2, 38236.7];
-        const bandlikFoizi = [67.7, 67.9, 68.6, 68.9, 68.4, 68.4];
-        const kambagallikFoizi = [15.05, 13.89, 12.82, 11.01, 8.52, 5.81];
-        const ishsizlar = [1500, 1450, 1420, 1400, 1380, 1350];
-
-        let mainChart = null;
-        let prognozChart = null;
-
-        // ========== 4 TA KARTANI YANGILASH ==========
-        function updateStatCards() {
-            let last = yillar.length - 1;
-            let prev = last - 1;
-            
-            document.getElementById('aholiValue').innerHTML = aholi[last].toLocaleString();
-            let aChange = ((aholi[last] - aholi[prev]) / aholi[prev] * 100).toFixed(2);
-            document.getElementById('aholiChange').innerHTML = (aChange > 0 ? '📈 +' : '📉 ') + aChange + '%';
-            
-            document.getElementById('bandlikValue').innerHTML = bandlikFoizi[last];
-            let bChange = (bandlikFoizi[last] - bandlikFoizi[prev]).toFixed(2);
-            document.getElementById('bandlikChange').innerHTML = (bChange > 0 ? '📈 +' : '📉 ') + bChange + '%';
-            
-            document.getElementById('kambagalValue').innerHTML = kambagallikFoizi[last];
-            let kChange = (kambagallikFoizi[last] - kambagallikFoizi[prev]).toFixed(2);
-            document.getElementById('kambagalChange').innerHTML = (kChange < 0 ? '📉 ' : '📈 ') + Math.abs(kChange) + '%';
-            
-            document.getElementById('ishsizValue').innerHTML = (ishsizlar[last] / 1000).toFixed(1);
-            let iChange = ((ishsizlar[last] - ishsizlar[prev]) / ishsizlar[prev] * 100).toFixed(2);
-            document.getElementById('ishsizChange').innerHTML = (iChange < 0 ? '📉 ' : '📈 ') + Math.abs(iChange) + '%';
-        }
-
-        // ========== JADVAL ==========
-        function updateTable() {
-            let html = '';
-            for(let i = 0; i < yillar.length; i++) {
-                html += `<tr><td>${yillar[i]}</td><td>${aholi[i].toLocaleString()}</td><td>${bandlikFoizi[i]}%</td><td>${kambagallikFoizi[i]}%</td></tr>`;
-            }
-            document.getElementById('tableBody').innerHTML = html;
-        }
-
-        // ========== 10 TA IJTIMOIY MASALA ==========
-        const problems = [
-            { name: "Kambag'allik", formula: "P = (N_poor / N_total) × 100%", solution: "Ijtimoiy yordam, ish o'rinlari", value: kambagallikFoizi, unit: "%", trend: "down" },
-            { name: "Ishsizlik", formula: "U = (Unemployed / Labor_force) × 100%", solution: "Kasb-hunar o'rgatish", value: [6.62,6.25,6.00,5.83,5.52,5.27], unit: "%", trend: "down" },
-            { name: "Demografik yuk", formula: "DR = (0-14+65+)/15-64 × 100%", solution: "Pensiya islohoti", value: [49.2,49.5,49.6,49.7,49.6,49.7], unit: "%", trend: "up" },
-            { name: "Bandlik", formula: "ER = (Employed / Labor_force) × 100%", solution: "Tadbirkorlik", value: bandlikFoizi, unit: "%", trend: "up" },
-            { name: "Pensiya yuki", formula: "PR = (Elderly / Working_age) × 100%", solution: "Pensiya jamg'armasi", value: [9.3,9.3,9.3,9.3,9.2,9.2], unit: "%", trend: "up" },
-            { name: "Daromad tengsizligi", formula: "Gini = 1 - Σ(p_i)(2Q_i-1)", solution: "Progressiv soliq", value: [32.5,32.1,31.8,31.2,30.5,29.8], unit: "ball", trend: "down" },
-            { name: "Migratsiya", formula: "NM = Immigration - Emigration", solution: "Mahalliy ish o'rinlari", value: [25,17,6,-3,-15,-25], unit: "ming", trend: "down" },
-            { name: "Uy-joy ta'minoti", formula: "HR = Housing/Households × 100%", solution: "Ijtimoiy uy-joy", value: [93.5,93.7,93.8,94.0,94.1,94.2], unit: "%", trend: "up" },
-            { name: "Inson taraqqiyoti", formula: "HDI = (Life+Edu+Income)/3", solution: "Ta'lim va sog'liq", value: [71.2,72.1,73.0,73.8,74.5,75.2], unit: "ball", trend: "up" },
-            { name: "Aholi zichligi", formula: "D = Population / Area", solution: "Shaharlashtirish", value: [77.8,79.4,80.8,82.0,84.5,86.1], unit: "kishi/km²", trend: "up" }
-        ];
-
-        function renderProblems() {
-            let grid = document.getElementById('problemsGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            for(let i = 0; i < problems.length; i++) {
-                let p = problems[i];
-                let last = p.value[p.value.length-1];
-                let first = p.value[0];
-                let change = (last - first).toFixed(1);
-                grid.innerHTML += `
-                    <div class="problem-card">
-                        <h3>${i+1}. ${p.name} muammosi</h3>
-                        <div class="formula">📐 ${p.formula}</div>
-                        <div class="result">${last}${p.unit}</div>
-                        <div class="${p.trend === 'up' ? 'trend-up' : 'trend-down'}">${p.trend === 'up' ? '📈 +' : '📉 '}${Math.abs(change)}${p.unit}</div>
-                        <div class="solution">💡 Yechim: ${p.solution}</div>
-                    </div>
-                `;
-            }
-        }
-
-        // ========== GRAFIKLAR ==========
-        const graphs = [
-            { name: "Aholi soni", get: () => aholi, color: "#1a73e8", label: "Aholi (ming)" },
-            { name: "Kambag'allik", get: () => kambagallikFoizi, color: "#dc3545", label: "Kambag'allik (%)" },
-            { name: "Bandlik", get: () => bandlikFoizi, color: "#28a745", label: "Bandlik (%)" },
-            { name: "Ishsizlar", get: () => ishsizlar, color: "#fd7e14", label: "Ishsizlar (ming)" }
-        ];
-
-        function renderGraphButtons() {
-            let container = document.getElementById('graphButtons');
-            if(!container) return;
-            container.innerHTML = '';
-            for(let i = 0; i < graphs.length; i++) {
-                let btn = document.createElement('button');
-                btn.className = 'graph-btn' + (i === 0 ? ' active' : '');
-                btn.textContent = graphs[i].name;
-                btn.onclick = (function(idx) {
-                    return function() {
-                        document.querySelectorAll('.graph-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        updateGraph(idx);
-                    };
-                })(i);
-                container.appendChild(btn);
-            }
-        }
-
-        function updateGraph(idx) {
-            let g = graphs[idx];
-            if(mainChart) mainChart.destroy();
-            let ctx = document.getElementById('mainChart').getContext('2d');
-            mainChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: yillar,
-                    datasets: [{
-                        label: g.label,
-                        data: g.get(),
-                        borderColor: g.color,
-                        backgroundColor: g.color + '20',
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true }
-            });
-        }
-
-        // ========== PROGNOZ ==========
-        function calculatePrognoz() {
-            let n = aholi.length;
-            let t = [...Array(n).keys()];
-            let sumT = t.reduce((a,b) => a+b, 0);
-            let sumY = aholi.reduce((a,b) => a+b, 0);
-            let sumTY = t.reduce((a,b,i) => a + b*aholi[i], 0);
-            let sumT2 = t.reduce((a,b) => a + b*b, 0);
-            
-            let slope = (n*sumTY - sumT*sumY) / (n*sumT2 - sumT*sumT);
-            let intercept = (sumY - slope*sumT) / n;
-            
-            let prog2026 = intercept + slope * n;
-            let prog2030 = intercept + slope * (n + 4);
-            
-            document.getElementById('linearPrognoz').innerHTML = prog2026.toFixed(1);
-            document.getElementById('prognoz2030').innerHTML = prog2030.toFixed(1);
-            
-            let cagr = Math.pow(aholi[n-1] / aholi[0], 1/(n-1)) - 1;
-            document.getElementById('cagrPrognoz').innerHTML = (aholi[n-1] * (1 + cagr)).toFixed(1);
-            
-            if(prognozChart) prognozChart.destroy();
-            let progYillar = [...yillar, 2026, 2027, 2028, 2029, 2030];
-            let linearValues = [...aholi];
-            for(let i = n; i < n+5; i++) linearValues.push(intercept + slope * i);
-            
-            prognozChart = new Chart(document.getElementById('prognozChart'), {
-                type: 'line',
-                data: {
-                    labels: progYillar,
-                    datasets: [
-                        { label: 'Haqiqiy', data: [...aholi, ...Array(5).fill(null)], borderColor: '#1a73e8', borderWidth: 3 },
-                        { label: 'Trend', data: linearValues, borderColor: '#ff6d00', borderDash: [5,5], fill: false }
-                    ]
-                },
-                options: { responsive: true }
-            });
-        }
-
-        // ========== BOSHLASH ==========
-        updateStatCards();
-        updateTable();
-        renderProblems();
-        renderGraphButtons();
-        updateGraph(0);
-        calculatePrognoz();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
