@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ijtimoiy Statistika | Viloyatlar tahlili</title>
+    <title>Ijtimoiy Statistika | Diplom loyihasi</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                 <div>
@@ -24,7 +23,7 @@
             </div>
         </div>
 
-        <!-- ASOSIY YO'NALISHLAR (TABLAR) -->
+        <!-- TABLAR -->
         <div class="main-tabs">
             <button class="tab-btn active" onclick="showTab('main')">🇺🇿 Umumiy statistika</button>
             <button class="tab-btn" onclick="showTab('regions')">🗺️ Viloyatlar tahlili (14 ta)</button>
@@ -34,7 +33,6 @@
 
         <!-- ========== 1. UMUMIY STATISTIKA ========== -->
         <div id="mainTab" class="tab-content active">
-            <!-- 4 TA ASOSIY KO'RSATKICH -->
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-value" id="current_aholi">-</div><div class="stat-label">Aholi soni (ming kishi)</div><div class="stat-change" id="aholi_change">-</div></div>
                 <div class="stat-card"><div class="stat-icon">💼</div><div class="stat-value" id="current_bandlik">-</div><div class="stat-label">Bandlik darajasi (%)</div><div class="stat-change" id="bandlik_change">-</div></div>
@@ -42,18 +40,15 @@
                 <div class="stat-card"><div class="stat-icon">🏭</div><div class="stat-value" id="current_ishsiz">-</div><div class="stat-label">Ishsizlar soni (ming kishi)</div><div class="stat-change" id="ishsiz_change">-</div></div>
             </div>
 
-            <!-- 10 TA IJTIMOIY MASALA -->
             <div class="section-title"><h2>📋 10 TA IJTIMOIY MASALA</h2><div class="title-line"></div></div>
             <div class="problem-grid" id="problemsGrid"></div>
 
-            <!-- GRAFIKLAR -->
             <div class="graph-section">
                 <div class="graph-title">📈 IJTIMOIY KO'RSATKICHLAR DINAMIKASI</div>
                 <div class="graph-buttons" id="graphButtons"></div>
                 <canvas id="mainChart"></canvas>
             </div>
 
-            <!-- PROGNOZ -->
             <div class="prognoz-section">
                 <div class="section-title"><h2>🔮 2026-2030 PROGNOZ</h2><div class="title-line"></div></div>
                 <div class="prognoz-grid">
@@ -64,7 +59,6 @@
                 <canvas id="prognozChart"></canvas>
             </div>
 
-            <!-- JADVAL -->
             <div class="table-section">
                 <h3>📊 MA'LUMOTLAR JADVALI</h3>
                 <input type="text" id="searchInput" placeholder="🔎 Qidirish..." class="search-input" style="margin-bottom:15px; width:100%;">
@@ -75,7 +69,6 @@
         <!-- ========== 2. VILOYATLAR TAHLILI ========== -->
         <div id="regionsTab" class="tab-content">
             <div class="section-title"><h2>🗺️ O'ZBEKISTON VILOYATLARI STATISTIKASI (14 TA)</h2><div class="title-line"></div></div>
-            
             <div class="region-search">
                 <input type="text" id="regionSearch" placeholder="🔎 Viloyat nomi bo'yicha qidirish..." class="search-input">
                 <select id="regionYearSelect" class="region-year-select">
@@ -83,9 +76,7 @@
                     <option value="2023">2023-yil</option><option value="2024">2024-yil</option><option value="2025" selected>2025-yil</option>
                 </select>
             </div>
-
             <div class="regions-grid" id="regionsGrid"></div>
-
             <div class="graph-section">
                 <div class="graph-title">📊 VILOYATLAR REYTINGI (2025)</div>
                 <canvas id="regionChart"></canvas>
@@ -95,7 +86,6 @@
         <!-- ========== 3. VILOYATLAR SOLISHTIRISH ========== -->
         <div id="compareTab" class="tab-content">
             <div class="section-title"><h2>⚖️ VILOYATLARNI SOLISHTIRISH</h2><div class="title-line"></div></div>
-            
             <div class="compare-regions">
                 <div class="compare-box">
                     <h3>📌 1-VILOYAT</h3>
@@ -113,15 +103,52 @@
             </div>
             <canvas id="compareChart" style="margin-top:30px; max-height:300px;"></canvas>
         </div>
-        <!-- ========== FIKR-MULOHAZALAR BO'LIMI ========== -->
-        <div class="feedback-section">
-            <div class="section-title">
-                <h2>💬 FIKR-MULOHAZALAR</h2>
-                <div class="title-line"></div>
+
+        <!-- ========== 4. MA'LUMOTLARNI BOSHQARISH ========== -->
+        <div id="manageTab" class="tab-content">
+            <div class="section-title"><h2>📝 MA'LUMOTLARNI BOSHQARISH</h2><div class="title-line"></div></div>
+            <div class="manage-grid">
+                <div class="manage-card">
+                    <h3>➕ Yangi viloyat qo'shish</h3>
+                    <input type="text" id="newRegionName" placeholder="Viloyat nomi" class="manage-input">
+                    <input type="number" id="newRegionAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newRegionBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newRegionKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <input type="number" id="newRegionYear" placeholder="Yil" value="2025" class="manage-input">
+                    <button class="btn-primary" id="addRegionBtn">✅ Qo'shish</button>
+                </div>
+                <div class="manage-card">
+                    <h3>📅 Yangi yil qo'shish (viloyatga)</h3>
+                    <select id="selectRegionForYear" class="manage-select"></select>
+                    <input type="number" id="newYearForRegion" placeholder="Yil" value="2026" class="manage-input">
+                    <input type="number" id="newYearAholi" placeholder="Aholi (ming)" class="manage-input">
+                    <input type="number" id="newYearBandlik" placeholder="Bandlik %" class="manage-input">
+                    <input type="number" id="newYearKambagal" placeholder="Kambag'allik %" class="manage-input">
+                    <button class="btn-primary" id="addYearToRegionBtn">✅ Yil qo'shish</button>
+                </div>
+                <div class="manage-card">
+                    <h3>💾 Ma'lumotlarni saqlash</h3>
+                    <button class="btn-secondary" id="saveDataBtn">💾 Saqlash (localStorage)</button>
+                    <button class="btn-secondary" id="loadDataBtn">📂 Yuklash</button>
+                    <button class="btn-secondary" id="resetDataBtn">🔄 Standart holat</button>
+                    <button class="btn-secondary" id="exportRegionsExcel">📎 Excel yuklash</button>
+                </div>
             </div>
-            
+            <div class="table-section" style="margin-top:30px;">
+                <h3>📋 BARCHA VILOYATLAR MA'LUMOTLARI</h3>
+                <div class="table-container">
+                    <table id="allRegionsTable">
+                        <thead><tr><th>Viloyat</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
+                        <tbody id="allRegionsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== FIKR-MULOHAZALAR ========== -->
+        <div class="feedback-section">
+            <div class="section-title"><h2>💬 FIKR-MULOHAZALAR</h2><div class="title-line"></div></div>
             <div class="feedback-container">
-                <!-- Fikr qoldirish formasi -->
                 <div class="feedback-form">
                     <h3>📝 O'z fikringizni qoldiring</h3>
                     <input type="text" id="feedbackName" placeholder="Ismingiz" class="feedback-input">
@@ -135,58 +162,10 @@
                     <textarea id="feedbackText" rows="4" placeholder="Fikringizni yozing..." class="feedback-textarea"></textarea>
                     <button class="feedback-btn" onclick="addFeedback()">💬 Fikr qoldirish</button>
                 </div>
-                
-                <!-- Fikrlar ro'yxati -->
                 <div class="feedback-list">
                     <h3>📋 Jami fikrlar: <span id="feedbackCount">0</span> ta</h3>
-                    <div id="feedbackList" class="feedback-items">
-                        <div class="empty-feedback">Hozircha hech qanday fikr qoldirilmagan. Birinchi bo'lib fikr bildiring!</div>
-                    </div>
+                    <div id="feedbackList" class="feedback-items"></div>
                     <button class="clear-feedback-btn" onclick="clearAllFeedback()">🗑️ Barcha fikrlarni tozalash</button>
-                </div>
-            </div>
-        </div>
-        <!-- ========== 4. MA'LUMOTLARNI BOSHQARISH ========== -->
-        <div id="manageTab" class="tab-content">
-            <div class="section-title"><h2>📝 MA'LUMOTLARNI BOSHQARISH</h2><div class="title-line"></div></div>
-            
-            <div class="manage-grid">
-                <div class="manage-card">
-                    <h3>➕ Yangi viloyat qo'shish</h3>
-                    <input type="text" id="newRegionName" placeholder="Viloyat nomi" class="manage-input">
-                    <input type="number" id="newRegionAholi" placeholder="Aholi (ming)" class="manage-input">
-                    <input type="number" id="newRegionBandlik" placeholder="Bandlik %" class="manage-input">
-                    <input type="number" id="newRegionKambagal" placeholder="Kambag'allik %" class="manage-input">
-                    <input type="number" id="newRegionYear" placeholder="Yil" value="2025" class="manage-input">
-                    <button class="btn-primary" id="addRegionBtn">✅ Qo'shish</button>
-                </div>
-
-                <div class="manage-card">
-                    <h3>📅 Yangi yil qo'shish (viloyatga)</h3>
-                    <select id="selectRegionForYear" class="manage-select"></select>
-                    <input type="number" id="newYearForRegion" placeholder="Yil" value="2026" class="manage-input">
-                    <input type="number" id="newYearAholi" placeholder="Aholi (ming)" class="manage-input">
-                    <input type="number" id="newYearBandlik" placeholder="Bandlik %" class="manage-input">
-                    <input type="number" id="newYearKambagal" placeholder="Kambag'allik %" class="manage-input">
-                    <button class="btn-primary" id="addYearToRegionBtn">✅ Yil qo'shish</button>
-                </div>
-
-                <div class="manage-card">
-                    <h3>💾 Ma'lumotlarni saqlash</h3>
-                    <button class="btn-secondary" id="saveDataBtn">💾 Saqlash (localStorage)</button>
-                    <button class="btn-secondary" id="loadDataBtn">📂 Yuklash</button>
-                    <button class="btn-secondary" id="resetDataBtn">🔄 Standart holat</button>
-                    <button class="btn-secondary" id="exportRegionsExcel">📎 Excel yuklash</button>
-                </div>
-            </div>
-
-            <div class="table-section" style="margin-top:30px;">
-                <h3>📋 BARCHA VILOYATLAR MA'LUMOTLARI</h3>
-                <div class="table-container">
-                    <table id="allRegionsTable">
-                        <thead><tr><th>Viloyat</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr></thead>
-                        <tbody id="allRegionsTableBody"></tbody>
-                    </table>
                 </div>
             </div>
         </div>
