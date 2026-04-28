@@ -494,3 +494,5 @@ renderRegions();
 updateRegionSelects();
 renderAllRegionsTable();
 updateRegionSelectForYear();
+// Fikr-mulohazalarni yuklash
+loadFeedback();
