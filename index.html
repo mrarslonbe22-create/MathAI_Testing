@@ -113,7 +113,39 @@
             </div>
             <canvas id="compareChart" style="margin-top:30px; max-height:300px;"></canvas>
         </div>
-
+        <!-- ========== FIKR-MULOHAZALAR BO'LIMI ========== -->
+        <div class="feedback-section">
+            <div class="section-title">
+                <h2>💬 FIKR-MULOHAZALAR</h2>
+                <div class="title-line"></div>
+            </div>
+            
+            <div class="feedback-container">
+                <!-- Fikr qoldirish formasi -->
+                <div class="feedback-form">
+                    <h3>📝 O'z fikringizni qoldiring</h3>
+                    <input type="text" id="feedbackName" placeholder="Ismingiz" class="feedback-input">
+                    <select id="feedbackRating" class="feedback-select">
+                        <option value="5">⭐⭐⭐⭐⭐ Ajoyib (5)</option>
+                        <option value="4">⭐⭐⭐⭐ Yaxshi (4)</option>
+                        <option value="3">⭐⭐⭐ O'rtacha (3)</option>
+                        <option value="2">⭐⭐ Qoniqarsiz (2)</option>
+                        <option value="1">⭐ Yomon (1)</option>
+                    </select>
+                    <textarea id="feedbackText" rows="4" placeholder="Fikringizni yozing..." class="feedback-textarea"></textarea>
+                    <button class="feedback-btn" onclick="addFeedback()">💬 Fikr qoldirish</button>
+                </div>
+                
+                <!-- Fikrlar ro'yxati -->
+                <div class="feedback-list">
+                    <h3>📋 Jami fikrlar: <span id="feedbackCount">0</span> ta</h3>
+                    <div id="feedbackList" class="feedback-items">
+                        <div class="empty-feedback">Hozircha hech qanday fikr qoldirilmagan. Birinchi bo'lib fikr bildiring!</div>
+                    </div>
+                    <button class="clear-feedback-btn" onclick="clearAllFeedback()">🗑️ Barcha fikrlarni tozalash</button>
+                </div>
+            </div>
+        </div>
         <!-- ========== 4. MA'LUMOTLARNI BOSHQARISH ========== -->
         <div id="manageTab" class="tab-content">
             <div class="section-title"><h2>📝 MA'LUMOTLARNI BOSHQARISH</h2><div class="title-line"></div></div>
