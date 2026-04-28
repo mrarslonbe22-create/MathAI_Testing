@@ -38,6 +38,11 @@ let regionChartObj = null;
 let compareChartObj = null;
 
 // ============================================
+// FIKR-MULOHAZALAR UCHUN O'ZGARUVCHILAR
+// ============================================
+let feedbacks = [];
+
+// ============================================
 // HISOBLASH FUNKSIYALARI
 // ============================================
 function calculateAll() {
@@ -82,7 +87,12 @@ function updateStatCards() {
 function updateTable() {
     let html = '';
     for(let i = 0; i < yillar.length; i++) {
-        html += `<tr><td>${yillar[i]}</td><td>${aholi[i].toLocaleString()}</td><td>${bandlikFoizi[i]}%</td><td>${kambagallikFoizi[i]}%</td></tr>`;
+        html += `<tr>
+            <td>${yillar[i]}</td>
+            <td>${aholi[i].toLocaleString()}</td>
+            <td>${bandlikFoizi[i]}%</td>
+            <td>${kambagallikFoizi[i]}%</td>
+        </tr>`;
     }
     document.getElementById('tableBody').innerHTML = html;
 }
@@ -335,7 +345,7 @@ function renderAllRegionsTable() {
         for(let y of [2020,2021,2022,2023,2024,2025]) {
             cells += `<td>${d.aholi[y] || '-'} ming<br>${d.bandlik[y] || '-'}%<br>${d.kambagallik[y] || '-'}%</td>`;
         }
-        tbody.innerHTML += `<tr><td><strong>${region}</strong></td>${cells}</tr>`;
+        tbody.innerHTML += `<td><td><strong>${region}</strong></td>${cells}</tr>`;
     }
 }
 
@@ -381,118 +391,69 @@ function refreshAll() {
 }
 
 // ============================================
-// EVENT LISTENERS
+// FIKR-MULOHAZALAR FUNKSIYALARI
 // ============================================
-if(document.getElementById('darkModeBtn')) {
-    document.getElementById('darkModeBtn').addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        this.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Light mode' : '🌙 Dark mode';
-    });
+
+function loadFeedback() {
+    let saved = localStorage.getItem('diplom_feedbacks');
+    if(saved) {
+        feedbacks = JSON.parse(saved);
+    } else {
+        feedbacks = [
+            { name: "Dasturchi", rating: 5, text: "Statistik ma'lumotlar juda foydali va aniq!", date: new Date().toLocaleString() },
+            { name: "Foydalanuvchi", rating: 4, text: "Viloyatlar bo'yicha ma'lumotlar ajoyib!", date: new Date().toLocaleString() }
+        ];
+    }
+    renderFeedback();
 }
 
-if(document.getElementById('searchInput')) {
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        let filter = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#tableBody tr');
-        for(let i = 0; i < rows.length; i++) {
-            rows[i].style.display = rows[i].innerText.toLowerCase().includes(filter) ? '' : 'none';
+function renderFeedback() {
+    let container = document.getElementById('feedbackList');
+    let countSpan = document.getElementById('feedbackCount');
+    
+    if(!container) return;
+    
+    if(countSpan) countSpan.innerHTML = feedbacks.length;
+    
+    if(feedbacks.length === 0) {
+        container.innerHTML = '<div class="empty-feedback">💬 Hozircha hech qanday fikr qoldirilmagan. Birinchi bo\'lib fikr bildiring!</div>';
+        return;
+    }
+    
+    let html = '';
+    for(let i = 0; i < feedbacks.length; i++) {
+        let f = feedbacks[i];
+        let stars = '';
+        for(let s = 0; s < 5; s++) {
+            stars += s < f.rating ? '⭐' : '☆';
         }
+        html += `
+            <div class="feedback-item">
+                <div class="feedback-item-header">
+                    <span class="feedback-name">${escapeHtml(f.name)}</span>
+                    <div>
+                        <span class="feedback-rating">${stars}</span>
+                        <span class="feedback-date">${f.date || 'Hozir'}</span>
+                    </div>
+                </div>
+                <div class="feedback-text">${escapeHtml(f.text)}</div>
+                <button class="feedback-delete" onclick="deleteFeedback(${i})">🗑 O'chirish</button>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
+function escapeHtml(text) {
+    if(!text) return '';
+    return text.replace(/[&<>]/g, function(m) {
+        if(m === '&') return '&amp;';
+        if(m === '<') return '&lt;';
+        if(m === '>') return '&gt;';
+        return m;
     });
 }
 
-if(document.getElementById('addRegionBtn')) {
-    document.getElementById('addRegionBtn').addEventListener('click', function() {
-        let name = document.getElementById('newRegionName')?.value.trim();
-        let a = parseFloat(document.getElementById('newRegionAholi')?.value);
-        let b = parseFloat(document.getElementById('newRegionBandlik')?.value);
-        let k = parseFloat(document.getElementById('newRegionKambagal')?.value);
-        let y = document.getElementById('newRegionYear')?.value;
-        if(name && a && b && k && y) {
-            if(regionsData[name]) { alert('❌ Bu viloyat mavjud!'); return; }
-            regionsData[name] = { aholi: {}, bandlik: {}, kambagallik: {} };
-            regionsData[name].aholi[y] = a;
-            regionsData[name].bandlik[y] = b;
-            regionsData[name].kambagallik[y] = k;
-            alert(`✅ ${name} qo'shildi!`);
-            refreshAll();
-        } else { alert('❌ Barcha maydonlarni to\'ldiring!'); }
-    });
-}
-
-if(document.getElementById('addYearToRegionBtn')) {
-    document.getElementById('addYearToRegionBtn').addEventListener('click', function() {
-        let region = document.getElementById('selectRegionForYear')?.value;
-        let year = document.getElementById('newYearForRegion')?.value;
-        let a = parseFloat(document.getElementById('newYearAholi')?.value);
-        let b = parseFloat(document.getElementById('newYearBandlik')?.value);
-        let k = parseFloat(document.getElementById('newYearKambagal')?.value);
-        if(region && year && a && b && k) {
-            if(!regionsData[region]) { alert('❌ Viloyat topilmadi!'); return; }
-            regionsData[region].aholi[year] = a;
-            regionsData[region].bandlik[year] = b;
-            regionsData[region].kambagallik[year] = k;
-            alert(`✅ ${region} ga ${year}-yil qo'shildi!`);
-            refreshAll();
-        } else { alert('❌ Barcha maydonlarni to\'ldiring!'); }
-    });
-}
-
-if(document.getElementById('saveDataBtn')) document.getElementById('saveDataBtn').addEventListener('click', saveToLocalStorage);
-if(document.getElementById('loadDataBtn')) document.getElementById('loadDataBtn').addEventListener('click', loadFromLocalStorage);
-if(document.getElementById('resetDataBtn')) document.getElementById('resetDataBtn').addEventListener('click', resetToDefault);
-
-if(document.getElementById('exportRegionsExcel')) {
-    document.getElementById('exportRegionsExcel').addEventListener('click', function() {
-        let data = [['Viloyat', '2020 aholi', '2020 bandlik%', '2020 kambagallik%', '2025 aholi', '2025 bandlik%', '2025 kambagallik%']];
-        let regions = Object.keys(regionsData);
-        for(let i = 0; i < regions.length; i++) {
-            let d = regionsData[regions[i]];
-            data.push([regions[i], d.aholi[2020] || '-', d.bandlik[2020] || '-', d.kambagallik[2020] || '-', d.aholi[2025] || '-', d.bandlik[2025] || '-', d.kambagallik[2025] || '-']);
-        }
-        let ws = XLSX.utils.aoa_to_sheet(data);
-        let wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Viloyatlar');
-        XLSX.writeFile(wb, `viloyatlar_${new Date().toISOString().slice(0,19)}.xlsx`);
-        alert('✅ Excel yuklandi!');
-    });
-}
-
-if(document.getElementById('regionSearch')) document.getElementById('regionSearch').addEventListener('keyup', () => renderRegions());
-if(document.getElementById('regionYearSelect')) document.getElementById('regionYearSelect').addEventListener('change', () => renderRegions());
-
-if(document.getElementById('compareRegion1')) document.getElementById('compareRegion1').addEventListener('change', renderCompare);
-if(document.getElementById('compareRegion2')) document.getElementById('compareRegion2').addEventListener('change', renderCompare);
-if(document.getElementById('compareYear1')) document.getElementById('compareYear1').addEventListener('change', renderCompare);
-if(document.getElementById('compareYear2')) document.getElementById('compareYear2').addEventListener('change', renderCompare);
-
-// ============================================
-// TAB FUNKSIYASI
-// ============================================
-function showTab(tabName) {
-    let tabs = document.querySelectorAll('.tab-content');
-    for(let i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-    document.getElementById(tabName + 'Tab').classList.add('active');
-    let btns = document.querySelectorAll('.tab-btn');
-    for(let i = 0; i < btns.length; i++) btns[i].classList.remove('active');
-    if(event && event.target) event.target.classList.add('active');
-    if(tabName === 'regions') renderRegions();
-    if(tabName === 'compare') { updateRegionSelects(); renderCompare(); }
-    if(tabName === 'manage') { updateRegionSelectForYear(); renderAllRegionsTable(); }
-}
-
-// ============================================
-// BOSHLASH
-// ============================================
-calculateAll();
-updateStatCards();
-updateTable();
-renderProblems();
-renderGraphButtons();
-updateGraph(0);
-calculatePrognoz();
-renderRegions();
-updateRegionSelects();
-renderAllRegionsTable();
-updateRegionSelectForYear();
-// Fikr-mulohazalarni yuklash
-loadFeedback();
+function addFeedback() {
+    let nameInput = document.getElementById('feedbackName');
+    let ratingSelect = document.getElementById('feedback
